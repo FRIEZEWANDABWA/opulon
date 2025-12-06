@@ -1,0 +1,63 @@
+version: '3.9'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: opulon_db_dev
+    environment:
+      POSTGRES_USER: opulon
+      POSTGRES_PASSWORD: devpassword123
+      POSTGRES_DB: opulon_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: opulon_redis_dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+
+  # FastAPI Backend (Development)
+  backend:
+    build: ./backend
+    container_name: opulon_backend_dev
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://opulon:devpassword123@db:5432/opulon_dev
+      - REDIS_URL=redis://redis:6379
+      - SECRET_KEY=opulon-dev-secret-key-2024
+      - DEBUG=True
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+      - redis
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Next.js Frontend (Development)
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: opulon_frontend_dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NODE_ENV=development
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
