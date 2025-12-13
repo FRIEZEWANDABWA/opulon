@@ -124,3 +124,18 @@ Lisinopril 10mg,ACE inhibitor for blood pressure,12.50,LIS-10MG-NEW,50,Heart Hea
             "is_prescription_required should be true/false"
         ]
     }
+
+@router.get("/users")
+async def get_all_users(current_user: User = Depends(get_admin_user), db: Session = Depends(get_db)):
+    """Get all users for admin management"""
+    users = db.query(User).all()
+    return [{
+        "id": user.id,
+        "email": user.email,
+        "username": user.username,
+        "full_name": user.full_name,
+        "role": user.role.value,
+        "is_active": user.is_active,
+        "is_verified": user.is_verified,
+        "created_at": user.created_at.isoformat()
+    } for user in users]

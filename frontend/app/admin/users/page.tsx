@@ -37,30 +37,9 @@ export default function AdminUsersPage() {
 
   const fetchUsers = async () => {
     try {
-      // Mock data for now since we don't have a users endpoint yet
-      const mockUsers: User[] = [
-        {
-          id: 1,
-          email: "admin@opulon.com",
-          username: "admin",
-          full_name: "Admin User",
-          role: "admin",
-          is_active: true,
-          is_verified: true,
-          created_at: "2025-12-05T04:49:18.790563Z"
-        },
-        {
-          id: 2,
-          email: "user@opulon.com", 
-          username: "testuser",
-          full_name: "Test User",
-          role: "user",
-          is_active: true,
-          is_verified: false,
-          created_at: "2025-12-05T04:49:18.790563Z"
-        }
-      ]
-      setUsers(mockUsers)
+      const { api } = await import('@/lib/api')
+      const usersData = await api.getAllUsers()
+      setUsers(usersData)
     } catch (error) {
       console.error('Failed to fetch users:', error)
     } finally {

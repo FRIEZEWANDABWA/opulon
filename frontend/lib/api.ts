@@ -144,6 +144,11 @@ class ApiClient {
     const response = await this.client.put(`/orders/${orderId}/status?status=${status}`);
     return response.data;
   }
+
+  async getAllUsers() {
+    const response = await this.client.get('/admin/users');
+    return response.data;
+  }
 }
 
 export const api = new ApiClient();

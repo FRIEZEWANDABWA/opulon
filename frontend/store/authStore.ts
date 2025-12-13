@@ -28,10 +28,26 @@ export const useAuthStore = create<AuthState>()(
       login: (user: User, token: string) => {
         localStorage.setItem('access_token', token);
         set({ user, isAuthenticated: true });
+        // Load user's cart after login
+        if (typeof window !== 'undefined') {
+          import('../lib/api').then(({ api }) => {
+            api.getCart().then((cartData) => {
+              import('./cartStore').then(({ useCartStore }) => {
+                useCartStore.getState().setItems(cartData.items || []);
+              });
+            }).catch(() => {});
+          });
+        }
       },
       logout: () => {
         localStorage.removeItem('access_token');
         set({ user: null, isAuthenticated: false });
+        // Clear cart on logout
+        if (typeof window !== 'undefined') {
+          import('./cartStore').then(({ useCartStore }) => {
+            useCartStore.getState().clearCart();
+          });
+        }
       },
       setLoading: (loading: boolean) => set({ isLoading: loading }),
     }),

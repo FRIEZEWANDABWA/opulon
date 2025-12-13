@@ -137,15 +137,15 @@ export default function LoginPage() {
               {/* Demo Credentials */}
               <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                 <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Demo Credentials:
+                  Test Credentials:
                 </p>
                 <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
-                  <div><strong>Test Credentials:</strong></div>
-                  <div>• Email: customer@opulon.com</div>
-                  <div>• Password: customer123</div>
-                  <div><strong>Or create new account:</strong></div>
-                  <div>• Registration works for new users</div>
-                  <div>• Admin: <a href="http://localhost:8000/admin/login" className="text-blue-500">Admin Panel</a></div>
+                  <div><strong>Regular User:</strong></div>
+                  <div>• Email: browsertest@example.com</div>
+                  <div>• Password: BrowserTest123!</div>
+                  <div><strong>Admin User:</strong></div>
+                  <div>• Email: test5@example.com</div>
+                  <div>• Password: Test123!</div>
                 </div>
               </div>
             </CardContent>

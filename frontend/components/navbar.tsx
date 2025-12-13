@@ -85,7 +85,7 @@ export function Navbar() {
                     Orders
                   </Button>
                 </Link>
-                <Link href="/account">
+                <Link href="/profile">
                   <Button variant="ghost" size="icon">
                     <User className="h-5 w-5" />
                   </Button>
