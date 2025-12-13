@@ -11,15 +11,14 @@ router = APIRouter(prefix="/cart", tags=["Cart"])
 
 @router.get("/", response_model=CartResponse)
 def get_cart(
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    # Temporarily use admin user (id=1) for testing
-    user_id = 1
-    cart = db.query(Cart).filter(Cart.user_id == user_id).first()
+    cart = db.query(Cart).filter(Cart.user_id == current_user.id).first()
     
     if not cart:
         # Create cart if doesn't exist
-        cart = Cart(user_id=user_id)
+        cart = Cart(user_id=current_user.id)
         db.add(cart)
         db.commit()
         db.refresh(cart)
@@ -78,11 +77,10 @@ def test_add_to_cart(
 @router.post("/items", response_model=CartResponse)
 def add_to_cart(
     item_data: CartItemCreate,
+    current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    # Temporarily use admin user (id=1) for testing
-    user_id = 1
-    # Check if product exists
+    # Check if product exists and is active
     product = db.query(Product).filter(
         Product.id == item_data.product_id,
         Product.is_active == True
@@ -94,10 +92,23 @@ def add_to_cart(
             detail="Product not found"
         )
     
+    # Check stock availability
+    if product.stock_quantity <= 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Product is out of stock"
+        )
+    
+    if item_data.quantity > product.stock_quantity:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Only {product.stock_quantity} items available in stock"
+        )
+    
     # Get or create cart
-    cart = db.query(Cart).filter(Cart.user_id == user_id).first()
+    cart = db.query(Cart).filter(Cart.user_id == current_user.id).first()
     if not cart:
-        cart = Cart(user_id=user_id)
+        cart = Cart(user_id=current_user.id)
         db.add(cart)
         db.commit()
         db.refresh(cart)
@@ -109,7 +120,13 @@ def add_to_cart(
     ).first()
     
     if existing_item:
-        existing_item.quantity += item_data.quantity
+        new_quantity = existing_item.quantity + item_data.quantity
+        if new_quantity > product.stock_quantity:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Cannot add {item_data.quantity} more. Only {product.stock_quantity - existing_item.quantity} available"
+            )
+        existing_item.quantity = new_quantity
     else:
         cart_item = CartItem(
             cart_id=cart.id,

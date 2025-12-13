@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 from .product import ProductResponse
 
@@ -22,7 +22,7 @@ class CartResponse(BaseModel):
     id: int
     user_id: int
     created_at: datetime
-    updated_at: datetime
+    updated_at: Optional[datetime] = None
     items: List[CartItemResponse]
     
     class Config:

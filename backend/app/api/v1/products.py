@@ -28,7 +28,7 @@ def get_products(
     
     products = query.offset(skip).limit(limit).all()
     
-    # Simple response format
+    # Enhanced response format with stock status
     return [{
         "id": p.id,
         "name": p.name,
@@ -36,6 +36,8 @@ def get_products(
         "price": float(p.price),
         "sku": p.sku,
         "stock_quantity": p.stock_quantity,
+        "stock_status": "out_of_stock" if p.stock_quantity <= 0 else "low_stock" if p.stock_quantity <= 10 else "in_stock",
+        "is_available": p.stock_quantity > 0,
         "category_id": p.category_id,
         "manufacturer": p.manufacturer,
         "dosage": p.dosage,
