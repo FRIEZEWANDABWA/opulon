@@ -19,7 +19,7 @@ def test_auth_system():
         "full_name": "Test User",
         "phone": "+1234567890",
         "address": "123 Test St",
-        "password": "TestPassword123!"
+        "password": "<TEST_PASSWORD>"
     }
     
     try:
@@ -42,7 +42,7 @@ def test_auth_system():
     print("\n2. Testing user login...")
     login_data = {
         "email": "test@example.com",
-        "password": "TestPassword123!"
+        "password": "<TEST_PASSWORD>"
     }
     
     try:

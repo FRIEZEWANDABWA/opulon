@@ -134,18 +134,15 @@ export default function LoginPage() {
                 </Button>
               </form>
               
-              {/* Demo Credentials */}
+              {/* Demo Information */}
               <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                 <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Test Credentials:
+                  Getting Started:
                 </p>
                 <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
-                  <div><strong>Regular User:</strong></div>
-                  <div>• Email: browsertest@example.com</div>
-                  <div>• Password: BrowserTest123!</div>
-                  <div><strong>Admin User:</strong></div>
-                  <div>• Email: test5@example.com</div>
-                  <div>• Password: Test123!</div>
+                  <div>• Create a new account to get started</div>
+                  <div>• Contact admin for demo access</div>
+                  <div>• Visit our documentation for setup guide</div>
                 </div>
               </div>
             </CardContent>
