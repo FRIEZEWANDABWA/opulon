@@ -10,7 +10,7 @@ from ...schemas.product import ProductCreate, ProductResponse, CategoryCreate, C
 router = APIRouter(prefix="/products", tags=["Products"])
 
 # Public routes
-@router.get("/", response_model=List[ProductResponse])
+@router.get("/")
 def get_products(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=100),
@@ -18,7 +18,7 @@ def get_products(
     search: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    query = db.query(Product).filter(Product.is_active == True)
+    query = db.query(Product)
     
     if category_id:
         query = query.filter(Product.category_id == category_id)
@@ -27,7 +27,21 @@ def get_products(
         query = query.filter(Product.name.ilike(f"%{search}%"))
     
     products = query.offset(skip).limit(limit).all()
-    return products
+    
+    # Simple response format
+    return [{
+        "id": p.id,
+        "name": p.name,
+        "description": p.description,
+        "price": float(p.price),
+        "sku": p.sku,
+        "stock_quantity": p.stock_quantity,
+        "category_id": p.category_id,
+        "manufacturer": p.manufacturer,
+        "dosage": p.dosage,
+        "is_prescription_required": p.is_prescription_required,
+        "image_url": p.image_url
+    } for p in products]
 
 @router.get("/{product_id}", response_model=ProductResponse)
 def get_product(product_id: int, db: Session = Depends(get_db)):
@@ -44,10 +58,14 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
     
     return product
 
-@router.get("/categories/", response_model=List[CategoryResponse])
+@router.get("/categories/")
 def get_categories(db: Session = Depends(get_db)):
-    categories = db.query(Category).filter(Category.is_active == True).all()
-    return categories
+    categories = db.query(Category).all()
+    return [{
+        "id": c.id,
+        "name": c.name,
+        "description": c.description
+    } for c in categories]
 
 # Admin routes
 @router.post("/", response_model=ProductResponse)
@@ -92,6 +110,25 @@ def update_product(
     db.refresh(product)
     
     return product
+
+@router.delete("/{product_id}")
+def delete_product(
+    product_id: int,
+    db: Session = Depends(get_db),
+    admin: User = Depends(get_admin_user)
+):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    
+    if not product:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Product not found"
+        )
+    
+    db.delete(product)
+    db.commit()
+    
+    return {"message": "Product deleted successfully"}
 
 @router.post("/categories/", response_model=CategoryResponse)
 def create_category(

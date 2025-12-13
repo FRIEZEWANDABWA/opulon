@@ -1,11 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons']
+  },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production'
+  },
   images: {
-    domains: ['localhost', 'api.opulonhq.com'],
+    domains: ['localhost'],
+    unoptimized: true
   },
-  env: {
-    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
-  },
+  swcMinify: true,
+  poweredByHeader: false,
+  compress: true
 }
 
 module.exports = nextConfig

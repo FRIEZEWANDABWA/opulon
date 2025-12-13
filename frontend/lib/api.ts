@@ -70,7 +70,7 @@ class ApiClient {
 
   // Product endpoints
   async getProducts(params?: any) {
-    const response = await this.client.get('/products', { params });
+    const response = await this.client.get('/products/', { params });
     return response.data;
   }
 
@@ -90,7 +90,7 @@ class ApiClient {
   }
 
   async getCategories() {
-    const response = await this.client.get('/products/categories');
+    const response = await this.client.get('/products/categories/');
     return response.data;
   }
 

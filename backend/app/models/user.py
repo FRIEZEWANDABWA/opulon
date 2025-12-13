@@ -5,8 +5,8 @@ import enum
 from ..core.database import Base
 
 class UserRole(str, enum.Enum):
-    USER = "user"
-    ADMIN = "admin"
+    CUSTOMER = "customer"
+    STAFF = "staff"
     SUPERADMIN = "superadmin"
 
 class User(Base):
@@ -19,7 +19,7 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     phone = Column(String, nullable=True)
     address = Column(String, nullable=True)
-    role = Column(Enum(UserRole), default=UserRole.USER)
+    role = Column(Enum(UserRole), default=UserRole.CUSTOMER)
     is_active = Column(Boolean, default=True)
     is_verified = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

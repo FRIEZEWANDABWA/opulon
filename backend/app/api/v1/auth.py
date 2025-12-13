@@ -7,7 +7,7 @@ from ...schemas.user import UserCreate, UserLogin, UserResponse, Token
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
-@router.post("/register", response_model=Token)
+@router.post("/register")
 def register(user_data: UserCreate, db: Session = Depends(get_db)):
     # Check if user exists
     if db.query(User).filter(User.email == user_data.email).first():
@@ -40,13 +40,24 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
     # Create token
     access_token = create_access_token(data={"sub": str(user.id)})
     
-    return Token(
-        access_token=access_token,
-        token_type="bearer",
-        user=UserResponse.from_orm(user)
-    )
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "username": user.username,
+            "full_name": user.full_name,
+            "phone": user.phone,
+            "address": user.address,
+            "role": user.role.value,
+            "is_active": user.is_active,
+            "is_verified": user.is_verified,
+            "created_at": user.created_at.isoformat()
+        }
+    }
 
-@router.post("/login", response_model=Token)
+@router.post("/login")
 def login(credentials: UserLogin, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == credentials.email).first()
     
@@ -64,8 +75,19 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
     
     access_token = create_access_token(data={"sub": str(user.id)})
     
-    return Token(
-        access_token=access_token,
-        token_type="bearer",
-        user=UserResponse.from_orm(user)
-    )
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "username": user.username,
+            "full_name": user.full_name,
+            "phone": user.phone,
+            "address": user.address,
+            "role": user.role.value,
+            "is_active": user.is_active,
+            "is_verified": user.is_verified,
+            "created_at": user.created_at.isoformat()
+        }
+    }
