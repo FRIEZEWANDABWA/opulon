@@ -15,8 +15,8 @@ from typing import Optional
 router = APIRouter(prefix="/admin", tags=["Secure Admin"])
 security = HTTPBearer()
 
-ADMIN_USERNAME = "admin@opulon.com"
-ADMIN_PASSWORD = "Hakunapassword@123"  # In production, use environment variable
+ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin@opulon.com")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")  # Use environment variable
 
 def verify_admin_session(admin_token: Optional[str] = Cookie(None)):
     if not admin_token or admin_token != "opulon_admin_authenticated":
