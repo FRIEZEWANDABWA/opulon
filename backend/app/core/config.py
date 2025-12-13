@@ -14,12 +14,12 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379"
     
     # Security
-    SECRET_KEY: str = "opulon-super-secret-key-change-in-production"
+    SECRET_KEY: str = "your-secret-key-here"  # Must be set via environment variable
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # CORS
-    ALLOWED_HOSTS: list = ["*"]
+    ALLOWED_HOSTS: list = ["http://localhost:3000", "localhost", "127.0.0.1", "https://yourdomain.com"]
     
     # Stripe
     STRIPE_SECRET_KEY: Optional[str] = None

@@ -1,9 +1,13 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
+from datetime import datetime, timedelta
 from ...core.database import get_db
 from ...core.security import verify_password, get_password_hash, create_access_token
 from ...models.user import User
 from ...schemas.user import UserCreate, UserLogin, UserResponse, Token
+
+# Simple rate limiting storage (use Redis in production)
+login_attempts = {}
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -58,10 +62,31 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
     }
 
 @router.post("/login")
-def login(credentials: UserLogin, db: Session = Depends(get_db)):
+def login(credentials: UserLogin, request: Request, db: Session = Depends(get_db)):
+    client_ip = request.client.host
+    
+    # Rate limiting check
+    now = datetime.utcnow()
+    if client_ip in login_attempts:
+        attempts = login_attempts[client_ip]
+        # Remove attempts older than 15 minutes
+        attempts = [attempt for attempt in attempts if now - attempt < timedelta(minutes=15)]
+        login_attempts[client_ip] = attempts
+        
+        if len(attempts) >= 5:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="Too many login attempts. Please try again later."
+            )
+    
     user = db.query(User).filter(User.email == credentials.email).first()
     
     if not user or not verify_password(credentials.password, user.hashed_password):
+        # Record failed attempt
+        if client_ip not in login_attempts:
+            login_attempts[client_ip] = []
+        login_attempts[client_ip].append(now)
+        
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials"
@@ -72,6 +97,10 @@ def login(credentials: UserLogin, db: Session = Depends(get_db)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Account is inactive"
         )
+    
+    # Clear failed attempts on successful login
+    if client_ip in login_attempts:
+        del login_attempts[client_ip]
     
     access_token = create_access_token(data={"sub": str(user.id)})
     
