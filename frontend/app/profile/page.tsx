@@ -14,6 +14,19 @@ export default function ProfilePage() {
   const { toast } = useToast()
   const [orders, setOrders] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [editMode, setEditMode] = useState(false)
+  const [passwordMode, setPasswordMode] = useState(false)
+  const [profileData, setProfileData] = useState({
+    full_name: user?.full_name || '',
+    username: user?.username || '',
+    phone: user?.phone || '',
+    address: user?.address || ''
+  })
+  const [passwordData, setPasswordData] = useState({
+    current_password: '',
+    new_password: '',
+    confirm_password: ''
+  })
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -66,6 +79,14 @@ export default function ProfilePage() {
               <div className="flex items-center space-x-4">
                 <span className="text-sm">Role: <strong>{user.role}</strong></span>
                 <span className="text-sm">Status: <strong>{user.is_active ? 'Active' : 'Inactive'}</strong></span>
+              </div>
+              <div className="flex gap-2 mt-4">
+                <Button variant="outline" onClick={() => setEditMode(true)}>
+                  Edit Profile
+                </Button>
+                <Button variant="outline" onClick={() => setPasswordMode(true)}>
+                  Change Password
+                </Button>
               </div>
             </CardContent>
           </Card>

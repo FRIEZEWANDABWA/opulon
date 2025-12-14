@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Switch } from '@/components/ui/switch'
+// import { Switch } from '@/components/ui/switch' // Component not available
 import { Separator } from '@/components/ui/separator'
 import { useToast } from '@/lib/use-toast'
 import { 
@@ -140,10 +140,13 @@ export default function AdminSettingsPage() {
                   Allow new users to create accounts
                 </p>
               </div>
-              <Switch
-                checked={settings.enableRegistration}
-                onCheckedChange={(checked) => updateSetting('enableRegistration', checked)}
-              />
+              <Button
+                variant={settings.enableRegistration ? "default" : "outline"}
+                size="sm"
+                onClick={() => updateSetting('enableRegistration', !settings.enableRegistration)}
+              >
+                {settings.enableRegistration ? "Enabled" : "Disabled"}
+              </Button>
             </div>
             <Separator />
             <div className="flex items-center justify-between">
@@ -153,10 +156,13 @@ export default function AdminSettingsPage() {
                   Temporarily disable site access
                 </p>
               </div>
-              <Switch
-                checked={settings.maintenanceMode}
-                onCheckedChange={(checked) => updateSetting('maintenanceMode', checked)}
-              />
+              <Button
+                variant={settings.maintenanceMode ? "destructive" : "outline"}
+                size="sm"
+                onClick={() => updateSetting('maintenanceMode', !settings.maintenanceMode)}
+              >
+                {settings.maintenanceMode ? "Active" : "Inactive"}
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -224,10 +230,13 @@ export default function AdminSettingsPage() {
                   Receive system notifications
                 </p>
               </div>
-              <Switch
-                checked={settings.enableNotifications}
-                onCheckedChange={(checked) => updateSetting('enableNotifications', checked)}
-              />
+              <Button
+                variant={settings.enableNotifications ? "default" : "outline"}
+                size="sm"
+                onClick={() => updateSetting('enableNotifications', !settings.enableNotifications)}
+              >
+                {settings.enableNotifications ? "Enabled" : "Disabled"}
+              </Button>
             </div>
           </CardContent>
         </Card>

@@ -1,0 +1,83 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: opulon_db_prod
+    environment:
+      POSTGRES_DB: opulon_prod
+      POSTGRES_USER: opulon_prod
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - opulon_network
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5432:5432"  # Only bind to localhost
+
+  redis:
+    image: redis:7-alpine
+    container_name: opulon_redis_prod
+    volumes:
+      - redis_data_prod:/data
+    networks:
+      - opulon_network
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"  # Only bind to localhost
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: opulon_backend_prod
+    env_file:
+      - ./backend/.env.prod
+    depends_on:
+      - db
+      - redis
+    networks:
+      - opulon_network
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8000:8000"  # Only bind to localhost
+    volumes:
+      - ./uploads:/app/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: opulon_frontend_prod
+    env_file:
+      - ./frontend/.env.prod
+    depends_on:
+      - backend
+    networks:
+      - opulon_network
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"  # Only bind to localhost
+
+  nginx:
+    image: nginx:alpine
+    container_name: opulon_nginx_prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - opulon_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data_prod:
+  redis_data_prod:
+
+networks:
+  opulon_network:
+    driver: bridge

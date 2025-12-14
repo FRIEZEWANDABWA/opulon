@@ -41,9 +41,10 @@ export default function AdminDashboard() {
     try {
       // In a real app, you'd have a dashboard endpoint
       // For now, we'll simulate with individual calls
-      const [products, orders] = await Promise.all([
+      const [products, orders, users] = await Promise.all([
         api.getProducts({ limit: 100 }),
-        api.getAllOrders()
+        api.getAllOrders(),
+        api.getAllUsers()
       ])
 
       const totalRevenue = orders.reduce((sum: number, order: any) => 
@@ -55,7 +56,7 @@ export default function AdminDashboard() {
       setStats({
         totalProducts: products.length,
         totalOrders: orders.length,
-        totalUsers: 150, // Mock data
+        totalUsers: users.length, // Real user count
         totalRevenue,
         recentOrders: orders.slice(0, 5),
         lowStockProducts: lowStockProducts.slice(0, 5)

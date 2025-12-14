@@ -66,12 +66,12 @@ export default function AdminProductsPage() {
     if (!confirm('Are you sure you want to delete this product?')) return
 
     try {
-      // In a real app, you'd have a delete endpoint
+      await api.deleteProduct(productId)
       toast({
         title: "Success",
         description: "Product deleted successfully",
       })
-      fetchProducts()
+      fetchProducts() // Refresh the list
     } catch (error) {
       toast({
         title: "Error",

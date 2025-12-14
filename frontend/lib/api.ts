@@ -89,6 +89,11 @@ class ApiClient {
     return response.data;
   }
 
+  async deleteProduct(id: number) {
+    const response = await this.client.delete(`/products/${id}`);
+    return response.data;
+  }
+
   async getCategories() {
     const response = await this.client.get('/products/categories/');
     return response.data;
