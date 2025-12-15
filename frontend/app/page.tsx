@@ -1,6 +1,8 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { ImageGallery } from "@/components/image-gallery"
+import { SectionBackground } from "@/components/section-background"
 import { 
   ShoppingBag, Shield, Truck, Clock, Building2, Users, 
   Stethoscope, Pill, Heart, Activity, Award, Globe,
@@ -11,9 +13,8 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="container relative space-y-8 pb-16 pt-16 md:pb-24 md:pt-20 lg:pb-32 lg:pt-24">
+      <SectionBackground image="Healthcare Technology4.jpg" overlay="blue" className="min-h-screen">
+        <div className="container space-y-8 pb-16 pt-16 md:pb-24 md:pt-20 lg:pb-32 lg:pt-24">
           <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 text-center">
             <div className="flex items-center gap-2 rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300">
               <Award className="h-4 w-4" />
@@ -60,83 +61,88 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </SectionBackground>
 
       {/* Business Solutions Section */}
-      <section className="container space-y-12 py-16 md:py-24">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl">
-            Comprehensive Business Solutions
-          </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Tailored healthcare distribution and technology solutions for every segment of the industry
-          </p>
-        </div>
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900">
-                  <Pill className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+      <SectionBackground image="Healthcare Technology.png" overlay="light">
+        <div className="container space-y-12 py-16 md:py-24">
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl">
+              Comprehensive Business Solutions
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Tailored healthcare distribution and technology solutions for every segment of the industry
+            </p>
+          </div>
+          <div className="mb-12">
+            <ImageGallery />
+          </div>
+          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <Card className="group hover:shadow-lg transition-all duration-300 bg-white/80 dark:bg-gray-900/80 backdrop-blur">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900">
+                    <Pill className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <CardTitle className="text-xl">Pharmaceutical Distribution</CardTitle>
                 </div>
-                <CardTitle className="text-xl">Pharmaceutical Distribution</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className="text-base leading-relaxed">
-                Comprehensive pharmaceutical supply chain solutions including specialty medications, 
-                generics, and biosimilars with temperature-controlled logistics.
-              </CardDescription>
-              <Link href="/pharmaceutical-distribution" className="mt-4 inline-flex items-center text-blue-600 hover:text-blue-700">
-                Learn More <ArrowRight className="ml-1 h-4 w-4" />
-              </Link>
-            </CardContent>
-          </Card>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-base leading-relaxed">
+                  Comprehensive pharmaceutical supply chain solutions including specialty medications, 
+                  generics, and biosimilars with temperature-controlled logistics.
+                </CardDescription>
+                <Link href="/pharmaceutical-distribution" className="mt-4 inline-flex items-center text-blue-600 hover:text-blue-700">
+                  Learn More <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </CardContent>
+            </Card>
 
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-green-100 p-2 dark:bg-green-900">
-                  <Stethoscope className="h-6 w-6 text-green-600 dark:text-green-400" />
+            <Card className="group hover:shadow-lg transition-all duration-300 bg-white/80 dark:bg-gray-900/80 backdrop-blur">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-green-100 p-2 dark:bg-green-900">
+                    <Stethoscope className="h-6 w-6 text-green-600 dark:text-green-400" />
+                  </div>
+                  <CardTitle className="text-xl">Medical-Surgical Supplies</CardTitle>
                 </div>
-                <CardTitle className="text-xl">Medical-Surgical Supplies</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className="text-base leading-relaxed">
-                Complete medical-surgical distribution including surgical instruments, 
-                diagnostic equipment, and consumable medical supplies.
-              </CardDescription>
-              <Link href="/medical-surgical" className="mt-4 inline-flex items-center text-green-600 hover:text-green-700">
-                Learn More <ArrowRight className="ml-1 h-4 w-4" />
-              </Link>
-            </CardContent>
-          </Card>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-base leading-relaxed">
+                  Complete medical-surgical distribution including surgical instruments, 
+                  diagnostic equipment, and consumable medical supplies.
+                </CardDescription>
+                <Link href="/medical-surgical" className="mt-4 inline-flex items-center text-green-600 hover:text-green-700">
+                  Learn More <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </CardContent>
+            </Card>
 
-          <Card className="group hover:shadow-lg transition-all duration-300">
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="rounded-lg bg-purple-100 p-2 dark:bg-purple-900">
-                  <Building2 className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+            <Card className="group hover:shadow-lg transition-all duration-300 bg-white/80 dark:bg-gray-900/80 backdrop-blur">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-purple-100 p-2 dark:bg-purple-900">
+                    <Building2 className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                  </div>
+                  <CardTitle className="text-xl">Retail Pharmacy Services</CardTitle>
                 </div>
-                <CardTitle className="text-xl">Retail Pharmacy Services</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <CardDescription className="text-base leading-relaxed">
-                End-to-end pharmacy solutions including inventory management, 
-                prescription processing, and patient care programs.
-              </CardDescription>
-              <Link href="/pharmacy-services" className="mt-4 inline-flex items-center text-purple-600 hover:text-purple-700">
-                Learn More <ArrowRight className="ml-1 h-4 w-4" />
-              </Link>
-            </CardContent>
-          </Card>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-base leading-relaxed">
+                  End-to-end pharmacy solutions including inventory management, 
+                  prescription processing, and patient care programs.
+                </CardDescription>
+                <Link href="/pharmacy-services" className="mt-4 inline-flex items-center text-purple-600 hover:text-purple-700">
+                  Learn More <ArrowRight className="ml-1 h-4 w-4" />
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </section>
+      </SectionBackground>
 
       {/* Why Choose Opulon */}
-      <section className="bg-gray-50 dark:bg-gray-900">
+      <SectionBackground image="global network2.png" overlay="green">
         <div className="container space-y-12 py-16 md:py-24">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl">
@@ -147,7 +153,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            <Card className="text-center">
+            <Card className="text-center bg-white/80 dark:bg-gray-900/80 backdrop-blur">
               <CardHeader>
                 <Shield className="mx-auto h-12 w-12 text-blue-600" />
                 <CardTitle className="text-lg">Quality & Compliance</CardTitle>
@@ -160,7 +166,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="text-center">
+            <Card className="text-center bg-white/80 dark:bg-gray-900/80 backdrop-blur">
               <CardHeader>
                 <TrendingUp className="mx-auto h-12 w-12 text-green-600" />
                 <CardTitle className="text-lg">Advanced Analytics</CardTitle>
@@ -173,7 +179,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="text-center">
+            <Card className="text-center bg-white/80 dark:bg-gray-900/80 backdrop-blur">
               <CardHeader>
                 <Globe className="mx-auto h-12 w-12 text-purple-600" />
                 <CardTitle className="text-lg">Global Network</CardTitle>
@@ -186,7 +192,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
 
-            <Card className="text-center">
+            <Card className="text-center bg-white/80 dark:bg-gray-900/80 backdrop-blur">
               <CardHeader>
                 <Heart className="mx-auto h-12 w-12 text-red-600" />
                 <CardTitle className="text-lg">Patient-Centered</CardTitle>
@@ -200,39 +206,41 @@ export default function HomePage() {
             </Card>
           </div>
         </div>
-      </section>
+      </SectionBackground>
 
       {/* Statistics Section */}
-      <section className="container py-16 md:py-24">
-        <div className="mx-auto max-w-4xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold sm:text-4xl">
-              Trusted by Healthcare Professionals Nationwide
-            </h2>
-          </div>
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            <div className="text-center">
-              <div className="text-4xl font-bold text-blue-600 mb-2">50,000+</div>
-              <div className="text-muted-foreground">Healthcare Facilities Served</div>
+      <SectionBackground image="sterile-equipment.jpg" overlay="light">
+        <div className="container py-16 md:py-24">
+          <div className="mx-auto max-w-4xl">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold sm:text-4xl">
+                Trusted by Healthcare Professionals Nationwide
+              </h2>
             </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-green-600 mb-2">1M+</div>
-              <div className="text-muted-foreground">Patients Reached Daily</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-purple-600 mb-2">99.9%</div>
-              <div className="text-muted-foreground">Order Accuracy Rate</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold text-orange-600 mb-2">150+</div>
-              <div className="text-muted-foreground">Years Combined Experience</div>
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+              <div className="text-center">
+                <div className="text-4xl font-bold text-blue-600 mb-2">50,000+</div>
+                <div className="text-muted-foreground">Healthcare Facilities Served</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-green-600 mb-2">1M+</div>
+                <div className="text-muted-foreground">Patients Reached Daily</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-purple-600 mb-2">99.9%</div>
+                <div className="text-muted-foreground">Order Accuracy Rate</div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl font-bold text-orange-600 mb-2">150+</div>
+                <div className="text-muted-foreground">Years Combined Experience</div>
+              </div>
             </div>
           </div>
         </div>
-      </section>
+      </SectionBackground>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-green-600 text-white">
+      <SectionBackground image="cta 1.webp" overlay="dark" className="text-white">
         <div className="container py-16 md:py-24">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl mb-6">
@@ -257,7 +265,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </SectionBackground>
     </div>
   )
 }

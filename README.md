@@ -1,61 +1,127 @@
-# Opulon - Modern Healthcare E-commerce Platform
+# 🏥 Opulon - Modern Healthcare E-commerce Platform
 
-🏥 **Next-generation pharmaceutical and medical supply e-commerce platform**
+A comprehensive healthcare distribution platform providing pharmaceutical products, medical supplies, and healthcare technology solutions.
 
 ## 🚀 Features
 
-- **Modern UI/UX**: Clean, responsive design with dark/light mode
-- **Secure Authentication**: JWT-based auth with role management
-- **AI-Powered**: Intelligent chatbot and product recommendations
-- **Payment Integration**: Stripe, PayPal, and Flutterwave support
-- **Admin Dashboard**: Complete product and order management
-- **Mobile-First**: Optimized for all devices
+- **Modern UI/UX** with healthcare-themed backgrounds
+- **Mobile-responsive** design with touch-friendly navigation
+- **Secure authentication** with JWT tokens
+- **Product catalog** with search and filtering
+- **Shopping cart** and order management
+- **Admin dashboard** for product and user management
+- **Dark/Light mode** support
+- **Enterprise-grade security** headers and CORS protection
 
-## 🛠 Tech Stack
-
-### Backend
-- **FastAPI** - High-performance Python API framework
-- **SQLAlchemy** - Database ORM
-- **PostgreSQL** - Primary database
-- **Redis** - Caching and sessions
-- **Celery** - Background tasks
+## 🛠️ Tech Stack
 
 ### Frontend
-- **Next.js 15** - React framework with App Router
-- **TailwindCSS** - Utility-first CSS framework
-- **shadcn/ui** - Modern component library
+- **Next.js 15** - React framework
+- **TypeScript** - Type safety
+- **Tailwind CSS** - Styling
+- **Radix UI** - Component library
 - **Zustand** - State management
-- **React Query** - Data fetching
-
-## 📁 Project Structure
-
-```
-opilon/
-├── backend/           # FastAPI backend
-├── frontend/          # Next.js frontend
-├── infra/            # Docker & deployment
-└── README.md
-```
-
-## 🚀 Quick Start
+- **Axios** - HTTP client
 
 ### Backend
-```bash
-cd backend
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-```
+- **FastAPI** - Python web framework
+- **PostgreSQL** - Database
+- **JWT** - Authentication
+- **SQLAlchemy** - ORM
 
-### Frontend
+## 📦 Installation
+
+### Prerequisites
+- Node.js 18+
+- npm 8+
+- Python 3.8+
+- PostgreSQL
+
+### Frontend Setup
 ```bash
 cd frontend
 npm install
+cp .env.example .env.local
 npm run dev
 ```
 
-## 🌐 Live Demo
-- **Frontend**: https://opulonhq.com
-- **API Docs**: https://api.opulonhq.com/docs
+### Environment Variables
+```bash
+# .env.local (development)
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NODE_ENV=development
+
+# .env.production (production)
+NEXT_PUBLIC_API_URL=https://opulonhq.com
+NODE_ENV=production
+```
+
+## 🚀 Deployment
+
+See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for detailed deployment instructions.
+
+### Quick Deploy
+```bash
+# Build and start
+npm run build
+npm start
+
+# Or use PM2 for production
+pm2 start npm --name "opulon-frontend" -- start
+```
+
+## 📱 Mobile Support
+
+- Responsive design for all screen sizes
+- Touch-optimized interactions
+- Mobile navigation menu
+- Optimized images and performance
+
+## 🔒 Security Features
+
+- Security headers (XSS, CSRF, Clickjacking protection)
+- CORS configuration
+- Input validation and sanitization
+- Secure token management
+- HTTPS enforcement
+
+## 🎨 Design System
+
+- Healthcare-themed color palette
+- Professional typography
+- Consistent spacing and layouts
+- Accessible design patterns
+- Dark/Light mode compatibility
+
+## 📊 Performance
+
+- Image optimization
+- Code splitting
+- CSS optimization
+- Compression enabled
+- Caching strategies
+
+## 🧪 Testing
+
+```bash
+# Lint code
+npm run lint
+
+# Build check
+npm run build
+
+# Full check
+npm run check
+```
+
+## 📄 License
+
+Private - All rights reserved
+
+## 🤝 Support
+
+For support and questions, contact the development team.
 
 ---
-Built with ❤️ for better healthcare accessibility
+
+Built with ❤️ for modern healthcare distribution

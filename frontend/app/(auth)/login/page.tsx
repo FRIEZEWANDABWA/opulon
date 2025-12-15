@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { SectionBackground } from '@/components/section-background'
 import { useAuthStore } from '@/store/authStore'
 import { api } from '@/lib/api'
 import { useToast } from '@/lib/use-toast'
@@ -54,9 +55,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <div className="container flex min-h-screen flex-col items-center justify-center py-12">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-8 sm:w-[400px]">
+    <SectionBackground image="Healthcare Technology1.webp" overlay="blue" className="min-h-screen">
+      <div className="container flex min-h-screen flex-col items-center justify-center py-6 px-4 sm:py-12">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:space-y-8 sm:w-[400px]">
           {/* Logo and Branding */}
           <div className="flex flex-col space-y-4 text-center">
             <Link href="/" className="mx-auto">
@@ -78,7 +79,7 @@ export default function LoginPage() {
           </div>
 
           {/* Login Form */}
-          <Card className="shadow-lg">
+          <Card className="shadow-lg bg-white/90 dark:bg-gray-900/90 backdrop-blur">
             <CardHeader className="space-y-1 pb-4">
               <CardTitle className="text-xl">Sign In to Your Account</CardTitle>
               <CardDescription>
@@ -175,6 +176,6 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-    </div>
+    </SectionBackground>
   )
 }

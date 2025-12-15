@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { SectionBackground } from '@/components/section-background'
 import { useAuthStore } from '@/store/authStore'
 import { api } from '@/lib/api'
 import { useToast } from '@/lib/use-toast'
@@ -87,144 +88,146 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
-      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[400px]">
-        <div className="flex flex-col space-y-2 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Create an account
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Enter your details to create your account
+    <SectionBackground image="Healthcare Technology3.png" overlay="green" className="min-h-screen">
+      <div className="container flex min-h-screen flex-col items-center justify-center py-6 px-4 sm:py-12">
+        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[500px]">
+          <div className="flex flex-col space-y-2 text-center">
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Create an account
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Enter your details to create your account
+            </p>
+          </div>
+          <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur">
+            <CardHeader>
+              <CardTitle>Sign Up</CardTitle>
+              <CardDescription>
+                Create your Opulon account to get started
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="full_name" className="text-sm font-medium">
+                      Full Name *
+                    </label>
+                    <Input
+                      id="full_name"
+                      name="full_name"
+                      placeholder="John Doe"
+                      value={formData.full_name}
+                      onChange={handleChange}
+                      disabled={isLoading}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="username" className="text-sm font-medium">
+                      Username *
+                    </label>
+                    <Input
+                      id="username"
+                      name="username"
+                      placeholder="johndoe"
+                      value={formData.username}
+                      onChange={handleChange}
+                      disabled={isLoading}
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="email" className="text-sm font-medium">
+                    Email *
+                  </label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="name@example.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="phone" className="text-sm font-medium">
+                    Phone
+                  </label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    placeholder="+1 (555) 123-4567"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="address" className="text-sm font-medium">
+                    Address
+                  </label>
+                  <Input
+                    id="address"
+                    name="address"
+                    placeholder="123 Main St, City, State"
+                    value={formData.address}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                  />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label htmlFor="password" className="text-sm font-medium">
+                      Password *
+                    </label>
+                    <Input
+                      id="password"
+                      name="password"
+                      type="password"
+                      placeholder="Enter password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      disabled={isLoading}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label htmlFor="confirmPassword" className="text-sm font-medium">
+                      Confirm Password *
+                    </label>
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type="password"
+                      placeholder="Confirm password"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      disabled={isLoading}
+                      required
+                    />
+                  </div>
+                </div>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Creating account..." : "Create Account"}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+          <p className="px-8 text-center text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              Sign in
+            </Link>
           </p>
         </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>Sign Up</CardTitle>
-            <CardDescription>
-              Create your Opulon account to get started
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="full_name" className="text-sm font-medium">
-                    Full Name *
-                  </label>
-                  <Input
-                    id="full_name"
-                    name="full_name"
-                    placeholder="John Doe"
-                    value={formData.full_name}
-                    onChange={handleChange}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="username" className="text-sm font-medium">
-                    Username *
-                  </label>
-                  <Input
-                    id="username"
-                    name="username"
-                    placeholder="johndoe"
-                    value={formData.username}
-                    onChange={handleChange}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="email" className="text-sm font-medium">
-                  Email *
-                </label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="name@example.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="phone" className="text-sm font-medium">
-                  Phone
-                </label>
-                <Input
-                  id="phone"
-                  name="phone"
-                  placeholder="+1 (555) 123-4567"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                />
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="address" className="text-sm font-medium">
-                  Address
-                </label>
-                <Input
-                  id="address"
-                  name="address"
-                  placeholder="123 Main St, City, State"
-                  value={formData.address}
-                  onChange={handleChange}
-                  disabled={isLoading}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="password" className="text-sm font-medium">
-                    Password *
-                  </label>
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    placeholder="Enter password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="confirmPassword" className="text-sm font-medium">
-                    Confirm Password *
-                  </label>
-                  <Input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type="password"
-                    placeholder="Confirm password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-              </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Creating account..." : "Create Account"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-        <p className="px-8 text-center text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <Link
-            href="/login"
-            className="underline underline-offset-4 hover:text-primary"
-          >
-            Sign in
-          </Link>
-        </p>
       </div>
-    </div>
+    </SectionBackground>
   )
 }

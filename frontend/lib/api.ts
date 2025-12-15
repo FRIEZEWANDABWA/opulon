@@ -11,6 +11,8 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      timeout: 30000, // 30 second timeout
+      withCredentials: false
     });
 
     // Request interceptor to add auth token
@@ -31,7 +33,9 @@ class ApiClient {
       (error) => {
         if (error.response?.status === 401) {
           this.clearToken();
-          window.location.href = '/login';
+          if (typeof window !== 'undefined') {
+            window.location.href = '/login';
+          }
         }
         return Promise.reject(error);
       }
@@ -48,111 +52,210 @@ class ApiClient {
   private clearToken(): void {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('access_token');
+      localStorage.removeItem('user');
     }
   }
 
   // Auth endpoints
   async login(email: string, password: string) {
-    const response = await this.client.post('/auth/login', { email, password });
-    if (response.data.access_token) {
-      localStorage.setItem('access_token', response.data.access_token);
+    try {
+      const response = await this.client.post('/auth/login', { email, password });
+      if (response.data.access_token) {
+        localStorage.setItem('access_token', response.data.access_token);
+        if (response.data.user) {
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+        }
+      }
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Login failed');
     }
-    return response.data;
   }
 
   async register(userData: any) {
-    const response = await this.client.post('/auth/register', userData);
-    if (response.data.access_token) {
-      localStorage.setItem('access_token', response.data.access_token);
+    try {
+      const response = await this.client.post('/auth/register', userData);
+      if (response.data.access_token) {
+        localStorage.setItem('access_token', response.data.access_token);
+        if (response.data.user) {
+          localStorage.setItem('user', JSON.stringify(response.data.user));
+        }
+      }
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Registration failed');
     }
-    return response.data;
+  }
+
+  async logout() {
+    try {
+      await this.client.post('/auth/logout');
+    } catch (error) {
+      // Continue with logout even if API call fails
+    } finally {
+      this.clearToken();
+    }
   }
 
   // Product endpoints
   async getProducts(params?: any) {
-    const response = await this.client.get('/products/', { params });
-    return response.data;
+    try {
+      const response = await this.client.get('/products/', { params });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to fetch products');
+    }
   }
 
   async getProduct(id: number) {
-    const response = await this.client.get(`/products/${id}`);
-    return response.data;
+    try {
+      const response = await this.client.get(`/products/${id}`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to fetch product');
+    }
   }
 
   async createProduct(productData: any) {
-    const response = await this.client.post('/products', productData);
-    return response.data;
+    try {
+      const response = await this.client.post('/products/', productData);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to create product');
+    }
   }
 
   async updateProduct(id: number, productData: any) {
-    const response = await this.client.put(`/products/${id}`, productData);
-    return response.data;
+    try {
+      const response = await this.client.put(`/products/${id}`, productData);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to update product');
+    }
   }
 
   async deleteProduct(id: number) {
-    const response = await this.client.delete(`/products/${id}`);
-    return response.data;
+    try {
+      const response = await this.client.delete(`/products/${id}`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to delete product');
+    }
   }
 
   async getCategories() {
-    const response = await this.client.get('/products/categories/');
-    return response.data;
+    try {
+      const response = await this.client.get('/products/categories/');
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to fetch categories');
+    }
   }
 
   // Cart endpoints
   async getCart() {
-    const response = await this.client.get('/cart');
-    return response.data;
+    try {
+      const response = await this.client.get('/cart/');
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to fetch cart');
+    }
   }
 
   async addToCart(productId: number, quantity: number) {
-    const response = await this.client.post('/cart/items', {
-      product_id: productId,
-      quantity,
-    });
-    return response.data;
+    try {
+      const response = await this.client.post('/cart/items', {
+        product_id: productId,
+        quantity,
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to add to cart');
+    }
   }
 
   async updateCartItem(itemId: number, quantity: number) {
-    const response = await this.client.put(`/cart/items/${itemId}?quantity=${quantity}`);
-    return response.data;
+    try {
+      const response = await this.client.put(`/cart/items/${itemId}?quantity=${quantity}`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to update cart item');
+    }
   }
 
   async removeFromCart(itemId: number) {
-    const response = await this.client.delete(`/cart/items/${itemId}`);
-    return response.data;
+    try {
+      const response = await this.client.delete(`/cart/items/${itemId}`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to remove from cart');
+    }
   }
 
   // Order endpoints
   async createOrder(orderData: any) {
-    const response = await this.client.post('/orders', orderData);
-    return response.data;
+    try {
+      const response = await this.client.post('/orders/', orderData);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to create order');
+    }
   }
 
   async getOrders() {
-    const response = await this.client.get('/orders');
-    return response.data;
+    try {
+      const response = await this.client.get('/orders/');
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to fetch orders');
+    }
   }
 
   async getOrder(id: number) {
-    const response = await this.client.get(`/orders/${id}`);
-    return response.data;
+    try {
+      const response = await this.client.get(`/orders/${id}`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to fetch order');
+    }
   }
 
   // Admin endpoints
   async getAllOrders() {
-    const response = await this.client.get('/orders/admin/all');
-    return response.data;
+    try {
+      const response = await this.client.get('/orders/admin/all');
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to fetch all orders');
+    }
   }
 
   async updateOrderStatus(orderId: number, status: string) {
-    const response = await this.client.put(`/orders/${orderId}/status?status=${status}`);
-    return response.data;
+    try {
+      const response = await this.client.put(`/orders/${orderId}/status?status=${status}`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to update order status');
+    }
   }
 
   async getAllUsers() {
-    const response = await this.client.get('/admin/users');
-    return response.data;
+    try {
+      const response = await this.client.get('/admin/users');
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to fetch users');
+    }
+  }
+
+  // Health check
+  async healthCheck() {
+    try {
+      const response = await this.client.get('/health');
+      return response.data;
+    } catch (error) {
+      throw new Error('Backend is not accessible');
+    }
   }
 }
 
