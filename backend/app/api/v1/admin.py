@@ -1,13 +1,17 @@
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 import csv
 import io
+import json
+from datetime import datetime
 from ...core.database import get_db
 from ...core.deps import get_admin_user
-from ...models.user import User
+from ...models.user import User, UserRole
 from ...models.product import Product, Category
 from ...schemas.product import ProductCreate, ProductResponse
+from ...schemas.user import UserCreate, UserUpdate
+from ...core.security import get_password_hash
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -16,11 +20,17 @@ async def get_admin_dashboard(current_user: User = Depends(get_admin_user), db: 
     """Get admin dashboard statistics"""
     total_products = db.query(Product).count()
     total_categories = db.query(Category).count()
+    total_users = db.query(User).count()
+    active_users = db.query(User).filter(User.is_active == True).count()
+    admin_users = db.query(User).filter(User.role == UserRole.ADMIN).count()
     low_stock_products = db.query(Product).filter(Product.stock_quantity < 10).count()
     
     return {
         "total_products": total_products,
         "total_categories": total_categories,
+        "total_users": total_users,
+        "active_users": active_users,
+        "admin_users": admin_users,
         "low_stock_products": low_stock_products,
         "message": f"Welcome back, {current_user.full_name}!"
     }
@@ -139,3 +149,201 @@ async def get_all_users(current_user: User = Depends(get_admin_user), db: Sessio
         "is_verified": user.is_verified,
         "created_at": user.created_at.isoformat()
     } for user in users]
+
+@router.post("/users")
+async def create_user(
+    user_data: UserCreate,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db)
+):
+    """Create a new user"""
+    # Check if user already exists
+    existing_user = db.query(User).filter(
+        (User.email == user_data.email) | (User.username == user_data.username)
+    ).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User with this email or username already exists"
+        )
+    
+    # Create new user
+    hashed_password = get_password_hash(user_data.password)
+    new_user = User(
+        email=user_data.email,
+        username=user_data.username,
+        full_name=user_data.full_name,
+        hashed_password=hashed_password,
+        role=UserRole(user_data.role) if user_data.role else UserRole.USER,
+        is_active=user_data.is_active if user_data.is_active is not None else True,
+        is_verified=user_data.is_verified if user_data.is_verified is not None else False
+    )
+    
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    
+    # Log audit
+    log_audit(
+        action="CREATE",
+        entity_type="USER",
+        entity_id=new_user.id,
+        user_id=current_user.id,
+        user_name=current_user.full_name,
+        changes={"email": new_user.email, "role": new_user.role.value}
+    )
+    
+    return {
+        "id": new_user.id,
+        "email": new_user.email,
+        "username": new_user.username,
+        "full_name": new_user.full_name,
+        "role": new_user.role.value,
+        "is_active": new_user.is_active,
+        "is_verified": new_user.is_verified,
+        "created_at": new_user.created_at.isoformat()
+    }
+
+@router.put("/users/{user_id}")
+async def update_user(
+    user_id: int,
+    user_data: UserUpdate,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db)
+):
+    """Update a user"""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Update fields if provided
+    if user_data.email:
+        # Check if email is already taken by another user
+        existing_user = db.query(User).filter(
+            User.email == user_data.email,
+            User.id != user_id
+        ).first()
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already taken"
+            )
+        user.email = user_data.email
+    
+    if user_data.username:
+        # Check if username is already taken by another user
+        existing_user = db.query(User).filter(
+            User.username == user_data.username,
+            User.id != user_id
+        ).first()
+        if existing_user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Username already taken"
+            )
+        user.username = user_data.username
+    
+    if user_data.full_name:
+        user.full_name = user_data.full_name
+    
+    if user_data.role:
+        user.role = UserRole(user_data.role)
+    
+    if user_data.is_active is not None:
+        user.is_active = user_data.is_active
+    
+    if user_data.is_verified is not None:
+        user.is_verified = user_data.is_verified
+    
+    changes = {}
+    if user_data.role and user.role.value != user_data.role:
+        changes["role"] = {"from": user.role.value, "to": user_data.role}
+    
+    if user_data.password:
+        user.hashed_password = get_password_hash(user_data.password)
+        changes["password"] = "updated"
+    
+    db.commit()
+    db.refresh(user)
+    
+    # Log audit if there were changes
+    if changes:
+        log_audit(
+            action="UPDATE",
+            entity_type="USER",
+            entity_id=user.id,
+            user_id=current_user.id,
+            user_name=current_user.full_name,
+            changes=changes
+        )
+    
+    return {
+        "id": user.id,
+        "email": user.email,
+        "username": user.username,
+        "full_name": user.full_name,
+        "role": user.role.value,
+        "is_active": user.is_active,
+        "is_verified": user.is_verified,
+        "created_at": user.created_at.isoformat()
+    }
+
+@router.delete("/users/{user_id}")
+async def delete_user(
+    user_id: int,
+    current_user: User = Depends(get_admin_user),
+    db: Session = Depends(get_db)
+):
+    """Delete a user"""
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    # Prevent deleting yourself
+    if user.id == current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot delete your own account"
+        )
+    
+    # Log audit before deletion
+    log_audit(
+        action="DELETE",
+        entity_type="USER",
+        entity_id=user.id,
+        user_id=current_user.id,
+        user_name=current_user.full_name,
+        changes={"deleted_user": user.email}
+    )
+    
+    db.delete(user)
+    db.commit()
+    
+    return {"message": "User deleted successfully"}
+
+# Simple audit log storage (in production, use a proper audit table)
+audit_logs = []
+
+def log_audit(action: str, entity_type: str, entity_id: int, user_id: int, user_name: str, changes: dict, ip_address: str = None):
+    audit_logs.append({
+        "id": len(audit_logs) + 1,
+        "action": action,
+        "entity_type": entity_type,
+        "entity_id": entity_id,
+        "user_id": user_id,
+        "user_name": user_name,
+        "changes": changes,
+        "timestamp": datetime.utcnow().isoformat(),
+        "ip_address": ip_address
+    })
+
+@router.get("/audits")
+async def get_audit_logs(current_user: User = Depends(get_admin_user)):
+    """Get audit logs"""
+    return audit_logs

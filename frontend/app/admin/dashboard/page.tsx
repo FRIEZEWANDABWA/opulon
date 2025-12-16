@@ -39,8 +39,6 @@ export default function AdminDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      // In a real app, you'd have a dashboard endpoint
-      // For now, we'll simulate with individual calls
       const [products, orders, users] = await Promise.all([
         api.getProducts({ limit: 100 }),
         api.getAllOrders(),
@@ -56,7 +54,7 @@ export default function AdminDashboard() {
       setStats({
         totalProducts: products.length,
         totalOrders: orders.length,
-        totalUsers: users.length, // Real user count
+        totalUsers: users.length,
         totalRevenue,
         recentOrders: orders.slice(0, 5),
         lowStockProducts: lowStockProducts.slice(0, 5)

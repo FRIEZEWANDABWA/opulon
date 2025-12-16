@@ -1,0 +1,10 @@
+
+# Add these fields to your existing User model in app/models/user.py
+
+# Enhanced security fields
+password_changed_at = Column(DateTime(timezone=True), server_default=func.now())
+failed_login_attempts = Column(Integer, default=0)
+locked_until = Column(DateTime(timezone=True), nullable=True)
+two_fa_secret = Column(String(32), nullable=True)
+two_fa_enabled = Column(Boolean, default=False)
+email_verified_at = Column(DateTime(timezone=True), nullable=True)

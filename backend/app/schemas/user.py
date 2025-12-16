@@ -13,6 +13,9 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str
+    role: Optional[str] = "user"
+    is_active: Optional[bool] = True
+    is_verified: Optional[bool] = False
     
     @validator('password')
     def validate_password(cls, v):
@@ -36,6 +39,51 @@ class UserCreate(UserBase):
     
     @validator('username')
     def validate_username(cls, v):
+        if len(v) < 3 or len(v) > 50:
+            raise ValueError('Username must be between 3 and 50 characters')
+        if not re.match(r'^[a-zA-Z0-9_]+$', v):
+            raise ValueError('Username can only contain letters, numbers, and underscores')
+        return v
+
+class UserUpdate(BaseModel):
+    email: Optional[EmailStr] = None
+    username: Optional[str] = None
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    password: Optional[str] = None
+    role: Optional[str] = None
+    is_active: Optional[bool] = None
+    is_verified: Optional[bool] = None
+    
+    @validator('password')
+    def validate_password(cls, v):
+        if v is None:
+            return v
+        if len(v) < 8:
+            raise ValueError('Password must be at least 8 characters long')
+        if not re.search(r'[A-Z]', v):
+            raise ValueError('Password must contain at least one uppercase letter')
+        if not re.search(r'[a-z]', v):
+            raise ValueError('Password must contain at least one lowercase letter')
+        if not re.search(r'\d', v):
+            raise ValueError('Password must contain at least one digit')
+        if not re.search(r'[!@#$%^&*(),.?":{}|<>]', v):
+            raise ValueError('Password must contain at least one special character')
+        return v
+    
+    @validator('email')
+    def validate_email(cls, v):
+        if v is None:
+            return v
+        if len(v) > 254:
+            raise ValueError('Email address too long')
+        return v.lower()
+    
+    @validator('username')
+    def validate_username(cls, v):
+        if v is None:
+            return v
         if len(v) < 3 or len(v) > 50:
             raise ValueError('Username must be between 3 and 50 characters')
         if not re.match(r'^[a-zA-Z0-9_]+$', v):

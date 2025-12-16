@@ -9,11 +9,14 @@ import {
   Users, 
   Search, 
   UserCheck, 
-  UserX,
   Mail,
   Calendar,
-  Shield
+  Shield,
+  Plus,
+  Edit,
+  Trash2
 } from 'lucide-react'
+import { api } from '@/lib/api'
 
 interface User {
   id: number
@@ -30,6 +33,19 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [showCreateDialog, setShowCreateDialog] = useState(false)
+  const [showEditDialog, setShowEditDialog] = useState(false)
+  const [editingUser, setEditingUser] = useState<User | null>(null)
+  const [formData, setFormData] = useState({
+    email: '',
+    username: '',
+    full_name: '',
+    password: '',
+    role: 'user',
+    is_active: true,
+    is_verified: false
+  })
+  const [message, setMessage] = useState('')
 
   useEffect(() => {
     fetchUsers()
@@ -37,14 +53,85 @@ export default function AdminUsersPage() {
 
   const fetchUsers = async () => {
     try {
-      const { api } = await import('@/lib/api')
       const usersData = await api.getAllUsers()
       setUsers(usersData)
     } catch (error) {
       console.error('Failed to fetch users:', error)
+      setMessage('Failed to load users')
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      await api.createUser(formData)
+      setMessage('User created successfully')
+      setShowCreateDialog(false)
+      resetForm()
+      fetchUsers()
+    } catch (error: any) {
+      setMessage(error.message || 'Failed to create user')
+    }
+  }
+
+  const handleEditUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editingUser) return
+    
+    try {
+      const updateData = { ...formData }
+      if (!updateData.password) {
+        delete updateData.password
+      }
+      await api.updateUser(editingUser.id, updateData)
+      setMessage('User updated successfully')
+      setShowEditDialog(false)
+      setEditingUser(null)
+      resetForm()
+      fetchUsers()
+    } catch (error: any) {
+      setMessage(error.message || 'Failed to update user')
+    }
+  }
+
+  const handleDeleteUser = async (userId: number) => {
+    if (!confirm('Are you sure you want to delete this user?')) return
+    
+    try {
+      await api.deleteUser(userId)
+      setMessage('User deleted successfully')
+      fetchUsers()
+    } catch (error: any) {
+      setMessage(error.message || 'Failed to delete user')
+    }
+  }
+
+  const openEditDialog = (user: User) => {
+    setEditingUser(user)
+    setFormData({
+      email: user.email,
+      username: user.username,
+      full_name: user.full_name,
+      password: '',
+      role: user.role,
+      is_active: user.is_active,
+      is_verified: user.is_verified
+    })
+    setShowEditDialog(true)
+  }
+
+  const resetForm = () => {
+    setFormData({
+      email: '',
+      username: '',
+      full_name: '',
+      password: '',
+      role: 'user',
+      is_active: true,
+      is_verified: false
+    })
   }
 
   const filteredUsers = users.filter(user =>
@@ -56,7 +143,6 @@ export default function AdminUsersPage() {
   const getRoleBadgeColor = (role: string) => {
     switch (role.toLowerCase()) {
       case 'admin':
-      case 'superadmin':
         return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
       case 'user':
         return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300'
@@ -83,6 +169,12 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
+      {message && (
+        <div className="p-3 bg-blue-100 border border-blue-300 rounded">
+          {message}
+        </div>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -94,6 +186,10 @@ export default function AdminUsersPage() {
             Manage user accounts and permissions
           </p>
         </div>
+        <Button onClick={() => setShowCreateDialog(true)}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add User
+        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -139,7 +235,7 @@ export default function AdminUsersPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {users.filter(u => u.role === 'admin' || u.role === 'superadmin').length}
+              {users.filter(u => u.role === 'admin').length}
             </div>
           </CardContent>
         </Card>
@@ -202,8 +298,11 @@ export default function AdminUsersPage() {
                     <Badge variant={user.is_verified ? "default" : "outline"}>
                       {user.is_verified ? "Verified" : "Unverified"}
                     </Badge>
-                    <Button variant="outline" size="sm">
-                      Edit
+                    <Button variant="outline" size="sm" onClick={() => openEditDialog(user)}>
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleDeleteUser(user.id)} className="text-red-600">
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
@@ -212,6 +311,125 @@ export default function AdminUsersPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Create User Modal */}
+      {showCreateDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <h2 className="text-xl font-bold mb-4">Create New User</h2>
+            <form onSubmit={handleCreateUser} className="space-y-4">
+              <Input
+                placeholder="Email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                required
+              />
+              <Input
+                placeholder="Username"
+                value={formData.username}
+                onChange={(e) => setFormData({...formData, username: e.target.value})}
+                required
+              />
+              <Input
+                placeholder="Full Name"
+                value={formData.full_name}
+                onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                required
+              />
+              <Input
+                placeholder="Password"
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                required
+              />
+              <select 
+                value={formData.role} 
+                onChange={(e) => setFormData({...formData, role: e.target.value})}
+                className="w-full p-2 border rounded"
+              >
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+              <div className="flex justify-end space-x-2">
+                <Button type="button" onClick={() => setShowCreateDialog(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Create User</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit User Modal */}
+      {showEditDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-md w-full">
+            <h2 className="text-xl font-bold mb-4">Edit User</h2>
+            <form onSubmit={handleEditUser} className="space-y-4">
+              <Input
+                placeholder="Email"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                required
+              />
+              <Input
+                placeholder="Username"
+                value={formData.username}
+                onChange={(e) => setFormData({...formData, username: e.target.value})}
+                required
+              />
+              <Input
+                placeholder="Full Name"
+                value={formData.full_name}
+                onChange={(e) => setFormData({...formData, full_name: e.target.value})}
+                required
+              />
+              <Input
+                placeholder="Password (leave empty to keep current)"
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({...formData, password: e.target.value})}
+              />
+              <select 
+                value={formData.role} 
+                onChange={(e) => setFormData({...formData, role: e.target.value})}
+                className="w-full p-2 border rounded"
+              >
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
+              </select>
+              <div className="flex items-center space-x-4">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_active}
+                    onChange={(e) => setFormData({...formData, is_active: e.target.checked})}
+                  />
+                  <span className="text-sm">Active</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.is_verified}
+                    onChange={(e) => setFormData({...formData, is_verified: e.target.checked})}
+                  />
+                  <span className="text-sm">Verified</span>
+                </label>
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button type="button" onClick={() => setShowEditDialog(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Update User</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

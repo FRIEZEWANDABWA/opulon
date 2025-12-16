@@ -248,6 +248,46 @@ class ApiClient {
     }
   }
 
+  async createUser(userData: any) {
+    try {
+      const response = await this.client.post('/admin/users', userData);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to create user');
+    }
+  }
+
+  async updateUser(userId: number, userData: any) {
+    try {
+      const response = await this.client.put(`/admin/users/${userId}`, userData);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to update user');
+    }
+  }
+
+  async deleteUser(userId: number) {
+    try {
+      const response = await this.client.delete(`/admin/users/${userId}`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to delete user');
+    }
+  }
+
+  async getAuditLogs() {
+    try {
+      const response = await this.client.get('/admin/audits');
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to fetch audit logs');
+    }
+  }
+
+
+
+
+
   // Health check
   async healthCheck() {
     try {
