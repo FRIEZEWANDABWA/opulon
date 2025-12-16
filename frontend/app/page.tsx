@@ -64,7 +64,7 @@ export default function HomePage() {
       </SectionBackground>
 
       {/* Business Solutions Section */}
-      <SectionBackground image="Healthcare Technology.png" overlay="light">
+      <SectionBackground image="6.png" overlay="light">
         <div className="container space-y-12 py-16 md:py-24">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl">
