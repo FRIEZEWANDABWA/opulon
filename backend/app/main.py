@@ -5,7 +5,8 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.base import BaseHTTPMiddleware
 from .core.config import settings
 from .core.database import engine, Base
-from .api.v1 import auth, products, cart, orders, admin
+from .api.v1 import auth, products, cart, orders, admin, upload
+from .api.v1 import products_admin
 
 # Security Headers Middleware
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
@@ -51,6 +52,8 @@ app.include_router(products.router, prefix="/api/v1")
 app.include_router(cart.router, prefix="/api/v1")
 app.include_router(orders.router, prefix="/api/v1")
 app.include_router(admin.router, prefix="/api/v1")
+app.include_router(upload.router, prefix="/api/v1")
+app.include_router(products_admin.router, prefix="/api/v1")
 
 # Mount static files
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")

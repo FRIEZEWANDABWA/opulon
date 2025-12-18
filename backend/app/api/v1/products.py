@@ -5,6 +5,7 @@ from ...core.database import get_db
 from ...core.deps import get_admin_user
 from ...models.product import Product, Category
 from ...models.user import User
+from ...models.product_image import ProductImage
 from ...schemas.product import ProductCreate, ProductResponse, CategoryCreate, CategoryResponse
 
 router = APIRouter(prefix="/products", tags=["Products"])
@@ -28,24 +29,41 @@ def get_products(
     
     products = query.offset(skip).limit(limit).all()
     
-    # Enhanced response format with stock status
-    return [{
-        "id": p.id,
-        "name": p.name,
-        "description": p.description,
-        "price": float(p.price),
-        "sku": p.sku,
-        "stock_quantity": p.stock_quantity,
-        "stock_status": "out_of_stock" if p.stock_quantity <= 0 else "low_stock" if p.stock_quantity <= 10 else "in_stock",
-        "is_available": p.stock_quantity > 0,
-        "category_id": p.category_id,
-        "manufacturer": p.manufacturer,
-        "dosage": p.dosage,
-        "is_prescription_required": p.is_prescription_required,
-        "image_url": p.image_url
-    } for p in products]
+    # Enhanced response format with stock status and images
+    result = []
+    for p in products:
+        # Get product images
+        from ...models.product_image import ProductImage
+        images = db.query(ProductImage).filter(
+            ProductImage.product_id == p.id
+        ).order_by(ProductImage.display_order).all()
+        
+        product_data = {
+            "id": p.id,
+            "name": p.name,
+            "description": p.description,
+            "price": float(p.price),
+            "sku": p.sku,
+            "stock_quantity": p.stock_quantity,
+            "stock_status": "out_of_stock" if p.stock_quantity <= 0 else "low_stock" if p.stock_quantity <= 10 else "in_stock",
+            "is_available": p.stock_quantity > 0,
+            "category_id": p.category_id,
+            "manufacturer": p.manufacturer,
+            "dosage": p.dosage,
+            "is_prescription_required": p.is_prescription_required,
+            "image_url": p.image_url,  # Legacy single image
+            "images": [{
+                "id": img.id,
+                "image_url": img.image_url,
+                "alt_text": img.alt_text,
+                "is_primary": img.is_primary
+            } for img in images]
+        }
+        result.append(product_data)
+    
+    return result
 
-@router.get("/{product_id}", response_model=ProductResponse)
+@router.get("/{product_id}")
 def get_product(product_id: int, db: Session = Depends(get_db)):
     product = db.query(Product).filter(
         Product.id == product_id,
@@ -58,7 +76,32 @@ def get_product(product_id: int, db: Session = Depends(get_db)):
             detail="Product not found"
         )
     
-    return product
+    # Get product images
+    images = db.query(ProductImage).filter(
+        ProductImage.product_id == product.id
+    ).order_by(ProductImage.display_order).all()
+    
+    return {
+        "id": product.id,
+        "name": product.name,
+        "description": product.description,
+        "price": float(product.price),
+        "sku": product.sku,
+        "stock_quantity": product.stock_quantity,
+        "category_id": product.category_id,
+        "manufacturer": product.manufacturer,
+        "dosage": product.dosage,
+        "is_prescription_required": product.is_prescription_required,
+        "is_active": product.is_active,
+        "created_at": product.created_at,
+        "updated_at": product.updated_at,
+        "images": [{
+            "id": img.id,
+            "image_url": img.image_url,
+            "alt_text": img.alt_text,
+            "is_primary": img.is_primary
+        } for img in images]
+    }
 
 @router.get("/categories/")
 def get_categories(db: Session = Depends(get_db)):

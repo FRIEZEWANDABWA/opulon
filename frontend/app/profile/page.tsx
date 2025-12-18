@@ -18,9 +18,7 @@ export default function ProfilePage() {
   const [passwordMode, setPasswordMode] = useState(false)
   const [profileData, setProfileData] = useState({
     full_name: user?.full_name || '',
-    username: user?.username || '',
-    phone: user?.phone || '',
-    address: user?.address || ''
+    username: user?.username || ''
   })
   const [passwordData, setPasswordData] = useState({
     current_password: '',

@@ -20,13 +20,28 @@ interface Product {
   stock_quantity: number
   is_prescription_required: boolean
   manufacturer?: string
+  images?: Array<{
+    id: number
+    image_url: string
+    alt_text: string
+    is_primary: boolean
+  }>
 }
 
 interface ProductCardProps {
   product: Product
+  showImages?: boolean
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, showImages = false }: ProductCardProps) {
+  
+  const getProductImage = () => {
+    if (showImages && product.images && product.images.length > 0) {
+      const primaryImage = product.images.find(img => img.is_primary) || product.images[0]
+      return `http://localhost:8000${primaryImage.image_url}`
+    }
+    return product.image_url || '/images/placeholder-product.jpg'
+  }
   const { addItem } = useCartStore()
   const { isAuthenticated } = useAuthStore()
   const { toast } = useToast()
@@ -53,7 +68,7 @@ export function ProductCard({ product }: ProductCardProps) {
         product: {
           id: product.id,
           name: product.name,
-          price: product.price,
+          price: typeof product.price === 'string' ? parseFloat(product.price) : product.price,
           image_url: product.image_url,
         }
       })
@@ -75,19 +90,16 @@ export function ProductCard({ product }: ProductCardProps) {
     <Card className="group overflow-hidden transition-all hover:shadow-lg">
       <CardHeader className="p-0">
         <div className="aspect-square overflow-hidden bg-gray-100">
-          {product.image_url ? (
-            <Image
-              src={product.image_url}
-              alt={product.name}
-              width={300}
-              height={300}
-              className="h-full w-full object-cover transition-transform group-hover:scale-105"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-muted">
-              <Package className="h-12 w-12 text-muted-foreground" />
-            </div>
-          )}
+          <Image
+            src={getProductImage()}
+            alt={product.name}
+            width={300}
+            height={300}
+            className="h-full w-full object-cover transition-transform group-hover:scale-105"
+            onError={(e) => {
+              e.currentTarget.src = '/images/placeholder-product.jpg'
+            }}
+          />
         </div>
       </CardHeader>
       <CardContent className="p-4">

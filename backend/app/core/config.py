@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from typing import Optional
+import os
 
 class Settings(BaseSettings):
     # App
@@ -8,18 +9,20 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     
     # Database
-    DATABASE_URL: str = "postgresql://postgres:password@localhost/opulon"
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://postgres:password@localhost/opulon")
     
     # Redis
-    REDIS_URL: str = "redis://localhost:6379"
+    REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379")
     
     # Security
-    SECRET_KEY: str = "your-secret-key-here"  # Must be set via environment variable
+    SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "your-secret-key-here")
+    JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "your-secret-key-here")
+    CSRF_SECRET_KEY: str = os.getenv("CSRF_SECRET_KEY", "your-csrf-key-here")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # CORS
-    ALLOWED_HOSTS: list = ["http://localhost:3000", "localhost", "127.0.0.1", "https://yourdomain.com"]
+    ALLOWED_HOSTS: list = ["*"]
     
     # Stripe
     STRIPE_SECRET_KEY: Optional[str] = None

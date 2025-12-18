@@ -9,26 +9,69 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { ArrowLeft, Upload, Download } from 'lucide-react'
 import { useToast } from '@/lib/use-toast'
+import PhotoUpload from '@/components/admin/PhotoUpload'
+import { api } from '@/lib/api'
 
 export default function CreateProductPage() {
   const router = useRouter()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [bulkUpload, setBulkUpload] = useState(false)
+  const [photos, setPhotos] = useState<any[]>([])
+  const [createdProductId, setCreatedProductId] = useState<number | null>(null)
 
   const handleSingleProductSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
     
-    // Mock implementation
-    setTimeout(() => {
+    try {
+      const formData = new FormData(e.currentTarget)
+      const productData = {
+        name: formData.get('name') as string,
+        description: formData.get('description') as string,
+        price: parseFloat(formData.get('price') as string),
+        sku: formData.get('sku') as string,
+        stock_quantity: parseInt(formData.get('stock') as string),
+        category_id: 1, // Default category
+        manufacturer: formData.get('manufacturer') as string,
+        dosage: formData.get('dosage') as string,
+        is_prescription_required: formData.get('prescription') === 'on'
+      }
+      
+      const newProduct = await api.createProduct(productData)
+      
+      // Upload images if any
+      const imageFiles = formData.getAll('images') as File[]
+      if (imageFiles.length > 0 && imageFiles[0].size > 0) {
+        const imageFormData = new FormData()
+        imageFiles.forEach(file => {
+          imageFormData.append('files', file)
+        })
+        
+        await fetch(`http://localhost:8000/api/v1/admin/products/${newProduct.id}/images`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          },
+          body: imageFormData
+        })
+      }
+      
       toast({
         title: "Success",
-        description: "Product created successfully",
+        description: "Product created successfully with images!",
       })
+      
       router.push('/admin/products')
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      })
+    } finally {
       setLoading(false)
-    }, 1000)
+    }
   }
 
   const handleBulkUpload = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -96,7 +139,7 @@ Lisinopril 10mg,ACE inhibitor for blood pressure,12.50,LIS-10MG-NEW,50,Heart Hea
       </div>
 
       {!bulkUpload ? (
-        /* Single Product Form */
+        <>
         <Card>
           <CardHeader>
             <CardTitle>Create New Product</CardTitle>
@@ -150,6 +193,19 @@ Lisinopril 10mg,ACE inhibitor for blood pressure,12.50,LIS-10MG-NEW,50,Heart Hea
                 <Label htmlFor="prescription">Prescription Required</Label>
               </div>
               
+              <div className="space-y-2">
+                <Label htmlFor="images">Product Images</Label>
+                <Input 
+                  id="images" 
+                  name="images" 
+                  type="file" 
+                  accept="image/*" 
+                  multiple 
+                  className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/80"
+                />
+                <p className="text-sm text-muted-foreground">Select up to 3 images for this product</p>
+              </div>
+              
               <div className="flex gap-4">
                 <Button type="submit" disabled={loading}>
                   {loading ? "Creating..." : "Create Product"}
@@ -161,8 +217,28 @@ Lisinopril 10mg,ACE inhibitor for blood pressure,12.50,LIS-10MG-NEW,50,Heart Hea
             </form>
           </CardContent>
         </Card>
+
+        {createdProductId && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Product Photos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PhotoUpload
+                productId={createdProductId}
+                photos={photos}
+                onPhotosChange={setPhotos}
+              />
+              <div className="mt-4">
+                <Button onClick={() => router.push('/admin/products')}>
+                  Finish & Go to Products
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        </>
       ) : (
-        /* Bulk Upload Form */
         <Card>
           <CardHeader>
             <CardTitle>Bulk Upload Products</CardTitle>

@@ -14,7 +14,6 @@ export const metadata: Metadata = {
   description: 'Quality pharmaceutical products and medical supplies delivered to your doorstep',
   keywords: 'healthcare, pharmaceuticals, medical supplies, pharmacy, opulon',
   authors: [{ name: 'Opulon' }],
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=5',
   robots: 'index, follow',
   openGraph: {
     title: 'Opulon - Modern Healthcare E-commerce',
@@ -22,6 +21,13 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US'
   }
+}
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#000000'
 }
 
 export default function RootLayout({

@@ -190,7 +190,8 @@ async def create_user(
         entity_id=new_user.id,
         user_id=current_user.id,
         user_name=current_user.full_name,
-        changes={"email": new_user.email, "role": new_user.role.value}
+        changes={"email": new_user.email, "role": new_user.role.value},
+        db=db
     )
     
     return {
@@ -277,7 +278,8 @@ async def update_user(
             entity_id=user.id,
             user_id=current_user.id,
             user_name=current_user.full_name,
-            changes=changes
+            changes=changes,
+            db=db
         )
     
     return {
@@ -319,7 +321,8 @@ async def delete_user(
         entity_id=user.id,
         user_id=current_user.id,
         user_name=current_user.full_name,
-        changes={"deleted_user": user.email}
+        changes={"deleted_user": user.email},
+        db=db
     )
     
     db.delete(user)
@@ -327,23 +330,52 @@ async def delete_user(
     
     return {"message": "User deleted successfully"}
 
-# Simple audit log storage (in production, use a proper audit table)
-audit_logs = []
-
-def log_audit(action: str, entity_type: str, entity_id: int, user_id: int, user_name: str, changes: dict, ip_address: str = None):
-    audit_logs.append({
-        "id": len(audit_logs) + 1,
-        "action": action,
-        "entity_type": entity_type,
-        "entity_id": entity_id,
-        "user_id": user_id,
-        "user_name": user_name,
-        "changes": changes,
-        "timestamp": datetime.utcnow().isoformat(),
-        "ip_address": ip_address
-    })
+def log_audit(action: str, entity_type: str, entity_id: int, user_id: int, user_name: str, changes: dict, ip_address: str = None, db: Session = None):
+    """Log audit event to database"""
+    from ...models.audit_log import AuditLog
+    
+    if not db:
+        from ...core.database import SessionLocal
+        db = SessionLocal()
+        should_close = True
+    else:
+        should_close = False
+    
+    try:
+        audit_log = AuditLog(
+            action=action,
+            entity_type=entity_type,
+            entity_id=entity_id,
+            user_id=user_id,
+            user_name=user_name,
+            changes=changes,
+            ip_address=ip_address
+        )
+        
+        db.add(audit_log)
+        db.commit()
+    except Exception as e:
+        print(f"Error logging audit: {e}")
+        db.rollback()
+    finally:
+        if should_close:
+            db.close()
 
 @router.get("/audits")
-async def get_audit_logs(current_user: User = Depends(get_admin_user)):
-    """Get audit logs"""
-    return audit_logs
+async def get_audit_logs(current_user: User = Depends(get_admin_user), db: Session = Depends(get_db)):
+    """Get audit logs from database"""
+    from ...models.audit_log import AuditLog
+    
+    audit_logs = db.query(AuditLog).order_by(AuditLog.timestamp.desc()).limit(100).all()
+    
+    return [{
+        "id": log.id,
+        "action": log.action,
+        "entity_type": log.entity_type,
+        "entity_id": log.entity_id,
+        "user_id": log.user_id,
+        "user_name": log.user_name,
+        "changes": log.changes,
+        "timestamp": log.timestamp.isoformat(),
+        "ip_address": log.ip_address
+    } for log in audit_logs]

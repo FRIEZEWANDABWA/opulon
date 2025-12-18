@@ -1,97 +1,91 @@
-version: '3.9'
+version: '3.8'
 
 services:
-  # PostgreSQL Database
-  db:
-    image: postgres:15-alpine
-    container_name: opulon_db
-    environment:
-      POSTGRES_USER: opulon
-      POSTGRES_PASSWORD: securepassword123
-      POSTGRES_DB: opulon_db
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        ENV: ${ENVIRONMENT:-development}
     ports:
-      - "5432:5432"
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+    volumes:
+      - ./backend:/app:${VOLUME_MODE:-rw}
+      - backend_uploads:/app/uploads
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - opilon-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        ENV: ${ENVIRONMENT:-development}
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+      - NODE_ENV=${NODE_ENV:-development}
+    volumes:
+      - ./frontend:/app:${VOLUME_MODE:-rw}
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+    networks:
+      - opilon-network
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-opilon}
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U opulon -d opulon_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    networks:
+      - opilon-network
 
-  # Redis Cache
   redis:
     image: redis:7-alpine
-    container_name: opulon_redis
-    ports:
-      - "6379:6379"
     command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # FastAPI Backend
-  backend:
-    build: ./backend
-    container_name: opulon_backend
     ports:
-      - "8000:8000"
-    environment:
-      - DATABASE_URL=postgresql://opulon:securepassword123@db:5432/opulon_db
-      - REDIS_URL=redis://redis:6379
-      - SECRET_KEY=opulon-docker-secret-key-2024
-      - DEBUG=True
-      - ACCESS_TOKEN_EXPIRE_MINUTES=30
-    volumes:
-      - ./backend:/app
-    depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    restart: unless-stopped
+      - "${REDIS_PORT:-6379}:6379"
+    networks:
+      - opilon-network
 
-  # Next.js Frontend
-  frontend:
-    build: ./frontend
-    container_name: opulon_frontend
-    ports:
-      - "3000:3000"
-    environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
-      - NODE_ENV=production
-    depends_on:
-      backend:
-        condition: service_healthy
-    restart: unless-stopped
-
-  # Nginx Reverse Proxy (Optional)
   nginx:
     image: nginx:alpine
-    container_name: opulon_nginx
     ports:
-      - "80:80"
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
     volumes:
-      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./infra/nginx/nginx.${ENVIRONMENT:-dev}.conf:/etc/nginx/nginx.conf:ro
+      - nginx_logs:/var/log/nginx
     depends_on:
       - frontend
       - backend
-    restart: unless-stopped
+    networks:
+      - opilon-network
 
 volumes:
   postgres_data:
   redis_data:
+  backend_uploads:
+  nginx_logs:
 
 networks:
-  default:
-    name: opulon_network
+  opilon-network:
+    driver: bridge

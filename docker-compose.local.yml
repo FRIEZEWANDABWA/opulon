@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        ENV: development
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=postgresql://opulon:devpassword123@host.docker.internal:5432/opulon_dev
+      - REDIS_URL=redis://:redis_local_pass_123@redis:6379
+      - JWT_SECRET_KEY=local_jwt_key_8f9e2a1b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f
+      - CSRF_SECRET_KEY=local_csrf_key_1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b
+    volumes:
+      - ./backend:/app:rw
+      - backend_uploads:/app/uploads
+    depends_on:
+      - redis
+    networks:
+      - opilon-local
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        ENV: development
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NODE_ENV=development
+    volumes:
+      - ./frontend:/app:rw
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+    networks:
+      - opilon-local
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=opilon_local
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=local_secure_pass_123
+    volumes:
+      - postgres_local_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5433:5432"
+    networks:
+      - opilon-local
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes --requirepass redis_local_pass_123
+    volumes:
+      - redis_local_data:/data
+    ports:
+      - "6380:6379"
+    networks:
+      - opilon-local
+
+volumes:
+  postgres_local_data:
+  redis_local_data:
+  backend_uploads:
+
+networks:
+  opilon-local:
+    driver: bridge

@@ -1,127 +1,45 @@
-# 🏥 Opulon - Modern Healthcare E-commerce Platform
+# Opulon E-commerce Platform
 
-A comprehensive healthcare distribution platform providing pharmaceutical products, medical supplies, and healthcare technology solutions.
+Modern healthcare e-commerce platform built with Next.js and FastAPI.
 
-## 🚀 Features
+## 🚀 Quick Start
 
-- **Modern UI/UX** with healthcare-themed backgrounds
-- **Mobile-responsive** design with touch-friendly navigation
-- **Secure authentication** with JWT tokens
-- **Product catalog** with search and filtering
-- **Shopping cart** and order management
-- **Admin dashboard** for product and user management
-- **Dark/Light mode** support
-- **Enterprise-grade security** headers and CORS protection
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **Next.js 15** - React framework
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
-- **Radix UI** - Component library
-- **Zustand** - State management
-- **Axios** - HTTP client
-
-### Backend
-- **FastAPI** - Python web framework
-- **PostgreSQL** - Database
-- **JWT** - Authentication
-- **SQLAlchemy** - ORM
-
-## 📦 Installation
-
-### Prerequisites
-- Node.js 18+
-- npm 8+
-- Python 3.8+
-- PostgreSQL
-
-### Frontend Setup
+### Development
 ```bash
-cd frontend
-npm install
-cp .env.example .env.local
-npm run dev
+docker-compose -f docker-compose.local.yml up -d
 ```
 
-### Environment Variables
+### Production
 ```bash
-# .env.local (development)
-NEXT_PUBLIC_API_URL=http://localhost:8000
-NODE_ENV=development
-
-# .env.production (production)
-NEXT_PUBLIC_API_URL=https://opulonhq.com
-NODE_ENV=production
+chmod +x deploy-production.sh
+./deploy-production.sh
 ```
 
-## 🚀 Deployment
+## 🔧 Features
 
-See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for detailed deployment instructions.
+- **Frontend**: Next.js 15 with TypeScript
+- **Backend**: FastAPI with PostgreSQL
+- **Security**: JWT auth, CSRF protection, rate limiting
+- **Images**: Optimized proxy system
+- **Admin**: Full product and user management
+- **Performance**: Caching, compression, CDN-ready
 
-### Quick Deploy
-```bash
-# Build and start
-npm run build
-npm start
+## 📊 Access Points
 
-# Or use PM2 for production
-pm2 start npm --name "opulon-frontend" -- start
-```
+- **Website**: https://opulonhq.com
+- **Admin**: https://opulonhq.com/admin
+- **API Docs**: https://opulonhq.com/docs
 
-## 📱 Mobile Support
+## 🔐 Admin Credentials
 
-- Responsive design for all screen sizes
-- Touch-optimized interactions
-- Mobile navigation menu
-- Optimized images and performance
+- Email: afubwa@opulonhq.com
+- Password: Afubwa@123
 
-## 🔒 Security Features
+## 📧 Contact
 
-- Security headers (XSS, CSRF, Clickjacking protection)
-- CORS configuration
-- Input validation and sanitization
-- Secure token management
-- HTTPS enforcement
+- Email: info@opulonhq.com
+- Website: https://opulonhq.com
 
-## 🎨 Design System
+## 📄 Documentation
 
-- Healthcare-themed color palette
-- Professional typography
-- Consistent spacing and layouts
-- Accessible design patterns
-- Dark/Light mode compatibility
-
-## 📊 Performance
-
-- Image optimization
-- Code splitting
-- CSS optimization
-- Compression enabled
-- Caching strategies
-
-## 🧪 Testing
-
-```bash
-# Lint code
-npm run lint
-
-# Build check
-npm run build
-
-# Full check
-npm run check
-```
-
-## 📄 License
-
-Private - All rights reserved
-
-## 🤝 Support
-
-For support and questions, contact the development team.
-
----
-
-Built with ❤️ for modern healthcare distribution
+See `DEPLOYMENT_GUIDE.md` for detailed deployment instructions.

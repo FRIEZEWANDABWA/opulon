@@ -1,243 +1,164 @@
-# 🚀 Opulon Perfect Deployment Guide
+# Opulon E-commerce Platform - VPS Deployment Guide
 
-## Pre-Deployment Checklist ✅
+## ✅ Project Status
+- **TypeScript**: No errors
+- **Build**: Successful 
+- **Images**: Working with proxy
+- **Database**: Connected with real data
+- **Admin**: Functional with image management
+- **Security**: Enhanced with rate limiting, CSRF, JWT
 
-### 1. Local Testing
+## 🚀 VPS Deployment Steps
+
+### 1. Server Requirements
+- Ubuntu 20.04+ or CentOS 8+
+- 2GB+ RAM
+- 20GB+ storage
+- Docker & Docker Compose installed
+
+### 2. Domain Setup
 ```bash
-cd C:\websites\opilon\frontend
-npm run check  # Lint and build check
-npm run dev    # Test locally one final time
+# Point your domain DNS A record to your VPS IP
+# Example: yourdomain.com -> 123.456.789.0
 ```
 
-### 2. Environment Files Ready
-- ✅ `.env.local` (for local development)
-- ✅ `.env.production` (for VPS production)
-- ✅ `.env.example` (for reference)
-
-## 🎯 Step-by-Step Deployment
-
-### Step 1: Prepare Repository
+### 3. Deploy to VPS
 ```bash
-# Navigate to project root
-cd C:\websites\opilon
+# Clone repository
+git clone <your-repo-url>
+cd opilon
 
-# Initialize git (if not done)
-git init
+# Make deployment script executable
+chmod +x deploy-production.sh
 
-# Add all files
-git add .
-
-# Commit changes
-git commit -m "Production-ready Opulon website with security enhancements"
-
-# Add remote repository
-git remote add origin https://github.com/yourusername/opulon.git
-
-# Push to GitHub
-git push -u origin main
+# Deploy with your domain
+./deploy-production.sh yourdomain.com
 ```
 
-### Step 2: VPS Backend Setup
+### 4. SSL Certificate (Let's Encrypt)
 ```bash
-# On your VPS, ensure backend is running
-sudo systemctl status your-backend-service
+# Install certbot
+sudo apt update
+sudo apt install certbot python3-certbot-nginx
 
-# Check if API endpoints are accessible
-curl https://opulonhq.com/api/v1/health
-curl https://opulonhq.com/api/v1/products/
+# Get SSL certificate
+sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+
+# Auto-renewal
+sudo crontab -e
+# Add: 0 12 * * * /usr/bin/certbot renew --quiet
 ```
 
-### Step 3: VPS Frontend Deployment
+### 5. Firewall Configuration
 ```bash
-# On VPS, clone repository
-git clone https://github.com/yourusername/opulon.git
-cd opulon/frontend
-
-# Create production environment file
-cat > .env.production << EOF
-NEXT_PUBLIC_API_URL=https://opulonhq.com
-NODE_ENV=production
-EOF
-
-# Install dependencies
-npm ci --production=false
-
-# Build application
-npm run build
-
-# Start application (use PM2 for production)
-npm install -g pm2
-pm2 start npm --name "opulon-frontend" -- start
-pm2 save
-pm2 startup
+# Allow HTTP/HTTPS
+sudo ufw allow 80
+sudo ufw allow 443
+sudo ufw enable
 ```
 
-### Step 4: Nginx Configuration
-```nginx
-# /etc/nginx/sites-available/opulon
-server {
-    listen 80;
-    server_name opulonhq.com www.opulonhq.com;
-    return 301 https://$server_name$request_uri;
-}
+## 🔧 Configuration Files
 
-server {
-    listen 443 ssl http2;
-    server_name opulonhq.com www.opulonhq.com;
-
-    ssl_certificate /path/to/ssl/certificate.crt;
-    ssl_certificate_key /path/to/ssl/private.key;
-
-    # Frontend
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-
-    # Backend API
-    location /api/ {
-        proxy_pass http://localhost:8000;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        
-        # CORS headers
-        add_header Access-Control-Allow-Origin "https://opulonhq.com" always;
-        add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS" always;
-        add_header Access-Control-Allow-Headers "Content-Type, Authorization" always;
-    }
-}
+### Environment Variables (.env.production)
+```env
+JWT_SECRET_KEY=your-secure-jwt-key
+CSRF_SECRET_KEY=your-secure-csrf-key
+DATABASE_URL=postgresql://opulon:devpassword123@db:5432/opulon_db_dev
+NEXT_PUBLIC_API_URL=https://yourdomain.com
 ```
 
-## 🔧 Troubleshooting Common Issues
+### Docker Compose (docker-compose.production.yml)
+- Nginx reverse proxy with SSL
+- Frontend (Next.js)
+- Backend (FastAPI)
+- PostgreSQL database
 
-### Issue 1: Products Not Loading
-**Check:**
+## 📊 Monitoring & Maintenance
+
+### Check Service Status
 ```bash
-# Test API directly
-curl https://opulonhq.com/api/v1/products/
-
-# Check browser console for CORS errors
-# Verify backend is running on port 8000
+docker-compose -f docker-compose.production.yml ps
 ```
-
-### Issue 2: Login Not Working
-**Check:**
-```bash
-# Test login endpoint
-curl -X POST https://opulonhq.com/api/v1/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"password"}'
-
-# Clear browser localStorage
-# Check network tab for failed requests
-```
-
-### Issue 3: Images Not Loading
-**Check:**
-```bash
-# Verify images are in public/images/
-ls frontend/public/images/
-
-# Check image paths in browser network tab
-# Ensure proper file extensions (.png, .jpg, .jpeg, .webp)
-```
-
-## 🎯 Final Verification Steps
-
-### 1. Frontend Health Check
-```bash
-# Check if frontend is running
-curl https://opulonhq.com
-
-# Check specific pages
-curl https://opulonhq.com/products
-curl https://opulonhq.com/about
-```
-
-### 2. Backend Health Check
-```bash
-# API health check
-curl https://opulonhq.com/api/v1/health
-
-# Test authentication
-curl https://opulonhq.com/api/v1/auth/login
-
-# Test products
-curl https://opulonhq.com/api/v1/products/
-```
-
-### 3. Mobile Testing
-- Open website on mobile device
-- Test navigation menu
-- Test all pages and functionality
-- Verify images load properly
-
-## 🚨 Emergency Rollback Plan
-
-If something goes wrong:
-```bash
-# Stop current deployment
-pm2 stop opulon-frontend
-
-# Rollback to previous version
-git checkout HEAD~1
-
-# Rebuild and restart
-npm run build
-pm2 restart opulon-frontend
-```
-
-## 📞 Support Commands
 
 ### View Logs
 ```bash
-# Frontend logs
-pm2 logs opulon-frontend
+# All services
+docker-compose -f docker-compose.production.yml logs -f
 
-# Nginx logs
-sudo tail -f /var/log/nginx/error.log
-sudo tail -f /var/log/nginx/access.log
+# Specific service
+docker-compose -f docker-compose.production.yml logs -f frontend
 ```
 
-### Restart Services
+### Database Backup
 ```bash
-# Restart frontend
-pm2 restart opulon-frontend
-
-# Restart nginx
-sudo systemctl restart nginx
-
-# Restart backend (adjust service name)
-sudo systemctl restart your-backend-service
+docker-compose -f docker-compose.production.yml exec db pg_dump -U opulon opulon_db_dev > backup.sql
 ```
 
-## ✅ Success Indicators
+### Update Application
+```bash
+git pull
+docker-compose -f docker-compose.production.yml build
+docker-compose -f docker-compose.production.yml up -d
+```
 
-Your deployment is successful when:
-- ✅ Website loads at https://opulonhq.com
-- ✅ All pages are accessible
-- ✅ Products load correctly
-- ✅ Login/registration works
-- ✅ Mobile navigation works
-- ✅ Background images are visible
-- ✅ No console errors
-- ✅ SSL certificate is valid
+## 🔐 Security Features
+- Rate limiting (10 req/s API, 5 req/m login)
+- HTTPS redirect
+- Security headers (HSTS, XSS protection)
+- JWT authentication with 1-hour expiry
+- CSRF protection
+- Audit logging
 
-## 🎉 Post-Deployment
+## 📱 Access Points
+- **Website**: https://yourdomain.com
+- **Admin Panel**: https://yourdomain.com/admin
+- **API Docs**: https://yourdomain.com/docs
 
-After successful deployment:
-1. Test all functionality thoroughly
-2. Monitor logs for any errors
-3. Set up monitoring/alerts
-4. Create backup schedule
-5. Document any custom configurations
+## 👤 Default Admin Credentials
+- Email: afubwa@opulonhq.com
+- Password: Afubwa@123
+
+## 🚨 Troubleshooting
+
+### Common Issues
+1. **Images not loading**: Check image proxy at `/api/image/`
+2. **Database connection**: Verify DATABASE_URL in .env.production
+3. **SSL issues**: Ensure domain points to server IP
+4. **Permission errors**: Check file permissions and Docker access
+
+### Performance Optimization
+- Images cached for 1 year
+- Gzip compression enabled
+- API response caching (30s)
+- Static file optimization
+
+## 📈 Recommendations for Production
+
+### Immediate Improvements
+1. **Monitoring**: Add Prometheus + Grafana
+2. **Logging**: Centralized logging with ELK stack
+3. **Backup**: Automated daily database backups
+4. **CDN**: CloudFlare for global performance
+5. **Email**: SMTP configuration for notifications
+
+### Security Enhancements
+1. **WAF**: Web Application Firewall
+2. **DDoS Protection**: CloudFlare or similar
+3. **Vulnerability Scanning**: Regular security audits
+4. **2FA**: Two-factor authentication for admin
+
+### Scalability
+1. **Load Balancer**: Multiple backend instances
+2. **Database**: Read replicas for scaling
+3. **Redis**: Session storage and caching
+4. **File Storage**: S3 or similar for images
+
+## 🎯 Next Steps After Deployment
+1. Test all functionality on production
+2. Set up monitoring and alerts
+3. Configure automated backups
+4. Implement CI/CD pipeline
+5. Add comprehensive error tracking
+6. Set up uptime monitoring
+7. Configure email notifications
+8. Add analytics tracking

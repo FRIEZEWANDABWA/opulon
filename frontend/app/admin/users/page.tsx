@@ -81,7 +81,7 @@ export default function AdminUsersPage() {
     if (!editingUser) return
     
     try {
-      const updateData = { ...formData }
+      const updateData: any = { ...formData }
       if (!updateData.password) {
         delete updateData.password
       }

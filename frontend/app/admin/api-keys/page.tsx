@@ -32,7 +32,7 @@ export default function ApiKeysPage() {
     secret_key: '••••••••••••••••••••••••••••••••••••••••••••••••••••'
   })
 
-  const toggleVisibility = (key: string) => {
+  const toggleVisibility = (key: keyof typeof showKeys) => {
     setShowKeys(prev => ({ ...prev, [key]: !prev[key] }))
   }
 

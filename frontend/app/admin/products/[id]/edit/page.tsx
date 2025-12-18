@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/lib/use-toast'
 import { api } from '@/lib/api'
 import { ArrowLeft, Save } from 'lucide-react'
+import PhotoUpload from '@/components/admin/PhotoUpload'
 
 export default function EditProductPage() {
   const router = useRouter()
@@ -29,6 +30,7 @@ export default function EditProductPage() {
     dosage: '',
     is_prescription_required: false
   })
+  const [photos, setPhotos] = useState<any[]>([])
 
   useEffect(() => {
     if (params.id) {
@@ -50,6 +52,7 @@ export default function EditProductPage() {
         dosage: product.dosage || '',
         is_prescription_required: product.is_prescription_required || false
       })
+      setPhotos(product.photos || [])
     } catch (error) {
       toast({
         title: "Error",
@@ -248,6 +251,19 @@ export default function EditProductPage() {
               </Button>
             </div>
           </form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Product Photos</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <PhotoUpload
+            productId={Number(params.id)}
+            photos={photos}
+            onPhotosChange={setPhotos}
+          />
         </CardContent>
       </Card>
     </div>

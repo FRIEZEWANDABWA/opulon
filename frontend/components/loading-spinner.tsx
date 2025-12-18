@@ -1,4 +1,5 @@
-import { Loader2 } from "lucide-react"
+"use client"
+
 import { cn } from "@/lib/utils"
 
 interface LoadingSpinnerProps {
@@ -14,17 +15,14 @@ export function LoadingSpinner({ className, size = "md" }: LoadingSpinnerProps) 
   }
 
   return (
-    <Loader2 className={cn("animate-spin", sizeClasses[size], className)} />
+    <div className={cn("animate-spin rounded-full border-2 border-gray-300 border-t-blue-600", sizeClasses[size], className)} />
   )
 }
 
 export function PageLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center space-y-4">
-        <LoadingSpinner size="lg" />
-        <p className="text-muted-foreground">Loading...</p>
-      </div>
+    <div className="flex items-center justify-center min-h-[200px]">
+      <LoadingSpinner size="lg" />
     </div>
   )
 }

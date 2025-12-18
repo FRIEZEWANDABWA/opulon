@@ -5,11 +5,12 @@ import { useState, useEffect } from 'react'
 export default function SimpleAdmin() {
   const [users, setUsers] = useState([])
   const [products, setProducts] = useState([])
-  const [stats, setStats] = useState({})
+  const [stats, setStats] = useState<any>({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    loadData()
+    // Load data in background, don't block page render
+    setTimeout(() => loadData(), 100)
   }, [])
 
   const loadData = async () => {

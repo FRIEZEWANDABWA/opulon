@@ -216,6 +216,11 @@ export default function AdminProductsPage() {
                         <Edit className="h-4 w-4" />
                       </Button>
                     </Link>
+                    <Link href={`/admin/products/${product.id}/images`}>
+                      <Button variant="outline" size="sm">
+                        Images
+                      </Button>
+                    </Link>
                   </div>
                   <Button
                     variant="outline"

@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
+import { apiCache } from './api-cache';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -11,7 +12,7 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
-      timeout: 30000, // 30 second timeout
+      timeout: 5000, // 5 second timeout for faster responses
       withCredentials: false
     });
 
@@ -99,8 +100,13 @@ class ApiClient {
 
   // Product endpoints
   async getProducts(params?: any) {
+    const cacheKey = `products_${JSON.stringify(params || {})}`;
+    const cached = apiCache.get(cacheKey);
+    if (cached) return cached;
+    
     try {
       const response = await this.client.get('/products/', { params });
+      apiCache.set(cacheKey, response.data, 30000); // Cache for 30 seconds
       return response.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.detail || 'Failed to fetch products');
@@ -127,7 +133,7 @@ class ApiClient {
 
   async updateProduct(id: number, productData: any) {
     try {
-      const response = await this.client.put(`/products/${id}`, productData);
+      const response = await this.client.put(`/admin/products/${id}`, productData);
       return response.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.detail || 'Failed to update product');
@@ -287,6 +293,52 @@ class ApiClient {
 
 
 
+
+  // Photo upload endpoints
+  async uploadProductPhoto(productId: number, file: File, isMain: boolean = false) {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('is_main', isMain.toString());
+      
+      const response = await this.client.post(`/products/${productId}/photos`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        timeout: 30000, // 30 seconds for file upload
+      });
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to upload photo');
+    }
+  }
+
+  async deleteProductPhoto(productId: number, photoId: number) {
+    try {
+      const response = await this.client.delete(`/products/${productId}/photos/${photoId}`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to delete photo');
+    }
+  }
+
+  async setMainPhoto(productId: number, photoId: number) {
+    try {
+      const response = await this.client.put(`/products/${productId}/photos/${photoId}/main`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to set main photo');
+    }
+  }
+
+  async deleteProductImage(productId: number, imageId: number) {
+    try {
+      const response = await this.client.delete(`/admin/products/${productId}/images/${imageId}`);
+      return response.data;
+    } catch (error: any) {
+      throw new Error(error.response?.data?.detail || 'Failed to delete image');
+    }
+  }
 
   // Health check
   async healthCheck() {

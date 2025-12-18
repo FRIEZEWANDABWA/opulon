@@ -33,6 +33,7 @@ def create_admin_user():
         hashed_password = get_password_hash(password)
         admin_user = User(
             email="admin@opulon.com",
+            username="admin",
             hashed_password=hashed_password,
             full_name="Admin User",
             role=UserRole.ADMIN,
@@ -55,6 +56,7 @@ def create_admin_user():
             test_hashed_password = get_password_hash(test_password)
             test_user = User(
                 email="user@opulon.com",
+                username="testuser",
                 hashed_password=test_hashed_password,
                 full_name="Test User",
                 role=UserRole.USER,
