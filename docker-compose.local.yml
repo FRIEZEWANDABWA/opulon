@@ -46,8 +46,8 @@ services:
     image: postgres:15-alpine
     environment:
       - POSTGRES_DB=opilon_local
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=local_secure_pass_123
+      - POSTGRES_USER=opulon
+      - POSTGRES_PASSWORD=devpassword123
     volumes:
       - postgres_local_data:/var/lib/postgresql/data
       - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -58,7 +58,7 @@ services:
 
   redis:
     image: redis:7-alpine
-    command: redis-server --appendonly yes --requirepass redis_local_pass_123
+    command: redis-server --appendonly yes
     volumes:
       - redis_local_data:/data
     ports:
