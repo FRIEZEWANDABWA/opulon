@@ -35,6 +35,6 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: Optional[str] = None
     
     class Config:
-        env_file = ".env"
+        pass
 
 settings = Settings()

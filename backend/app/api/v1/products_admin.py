@@ -8,10 +8,53 @@ from pathlib import Path
 from ...core.database import get_db
 from ...core.deps import get_admin_user
 from ...models.user import User
-from ...models.product import Product, Category
+from ...models.product import Product, Category, ProductCreate
 from ...models.product_image import ProductImage
 
 router = APIRouter(prefix="/admin/products", tags=["Admin Products"])
+
+@router.post("/", status_code=status.HTTP_201_CREATED)
+async def create_product(
+    product_in: ProductCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_admin_user)
+):
+    """Create a new product"""
+    
+    # Check if SKU is unique
+    existing_sku = db.query(Product).filter(Product.sku == product_in.sku).first()
+    if existing_sku:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="SKU already exists"
+        )
+
+    # Check if category exists
+    category = db.query(Category).filter(Category.id == product_in.category_id).first()
+    if not category:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Category with id {product_in.category_id} not found"
+        )
+
+    new_product = Product(**product_in.dict())
+    
+    db.add(new_product)
+    db.commit()
+    db.refresh(new_product)
+    
+    return {
+        "id": new_product.id,
+        "name": new_product.name,
+        "description": new_product.description,
+        "price": float(new_product.price),
+        "sku": new_product.sku,
+        "stock_quantity": new_product.stock_quantity,
+        "category_id": new_product.category_id,
+        "manufacturer": new_product.manufacturer,
+        "dosage": new_product.dosage,
+        "is_prescription_required": new_product.is_prescription_required
+    }
 
 @router.put("/{product_id}")
 async def update_product(

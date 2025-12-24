@@ -2,6 +2,8 @@ from sqlalchemy import Column, Integer, String, Text, Boolean, DateTime, Foreign
 from sqlalchemy.types import DECIMAL
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
+from pydantic import BaseModel
+from typing import Optional
 from ..core.database import Base
 
 class Category(Base):
@@ -40,3 +42,14 @@ class Product(Base):
     order_items = relationship("OrderItem", back_populates="product")
     cart_items = relationship("CartItem", back_populates="product")
     images = relationship("ProductImage", back_populates="product", cascade="all, delete-orphan")
+
+class ProductCreate(BaseModel):
+    name: str
+    description: Optional[str] = None
+    price: float
+    sku: str
+    stock_quantity: int
+    category_id: int
+    manufacturer: Optional[str] = None
+    dosage: Optional[str] = None
+    is_prescription_required: bool = False

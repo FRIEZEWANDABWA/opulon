@@ -14,19 +14,19 @@ def create_admin_users():
     
     try:
         # Super Admin - Frieze Wandabwa
-        super_admin = db.query(User).filter(User.email == "friezekw@gmail.com").first()
+        super_admin = db.query(User).filter(User.email == "admin@gmail.com").first()
         if not super_admin:
             super_admin = User(
-                email="friezekw@gmail.com",
-                username="frieze",
-                full_name="Frieze Wandabwa",
+                email="admin@gmail.com",
+                username="admin",
+                full_name="Admin Admin",
                 hashed_password=get_password_hash("Hakunapassword@123"),
                 role=UserRole.SUPERADMIN,
                 is_active=True,
                 is_verified=True
             )
             db.add(super_admin)
-            print("✅ Created Super Admin: Frieze Wandabwa")
+            print("✅ Created Super Admin: Admin Admin")
         else:
             print("ℹ️ Super Admin already exists")
 
