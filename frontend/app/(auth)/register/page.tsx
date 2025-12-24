@@ -10,7 +10,7 @@ import { SectionBackground } from '@/components/section-background'
 import { useAuthStore } from '@/store/authStore'
 import { api } from '@/lib/api'
 import { useToast } from '@/lib/use-toast'
-import { Check, X } from 'lucide-react'
+import { Check, X, Eye, EyeOff } from 'lucide-react'
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -30,6 +30,8 @@ export default function RegisterPage() {
     number: false,
     special: false,
   })
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const { login } = useAuthStore()
   const router = useRouter()
   const { toast } = useToast()
@@ -208,16 +210,25 @@ export default function RegisterPage() {
                     <label htmlFor="password" className="text-sm font-medium">
                       Password *
                     </label>
-                    <Input
-                      id="password"
-                      name="password"
-                      type="password"
-                      placeholder="Enter password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      disabled={isLoading}
-                      required
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Enter password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        disabled={isLoading}
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff /> : <Eye />}
+                      </button>
+                    </div>
                     <div className="text-xs text-muted-foreground mt-2">
                       Password must contain:
                       <ul>
@@ -243,16 +254,25 @@ export default function RegisterPage() {
                     <label htmlFor="confirmPassword" className="text-sm font-medium">
                       Confirm Password *
                     </label>
-                    <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      placeholder="Confirm password"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      disabled={isLoading}
-                      required
-                    />
+                    <div className="relative">
+                      <Input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        placeholder="Confirm password"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        disabled={isLoading}
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      >
+                        {showConfirmPassword ? <EyeOff /> : <Eye />}
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <Button type="submit" className="w-full" disabled={isLoading}>
