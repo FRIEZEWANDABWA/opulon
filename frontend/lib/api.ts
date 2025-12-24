@@ -69,7 +69,7 @@ class ApiClient {
       }
       return response.data;
     } catch (error: any) {
-      throw new Error(error.response?.data?.detail || 'Login failed');
+      throw error;
     }
   }
 
@@ -84,7 +84,7 @@ class ApiClient {
       }
       return response.data;
     } catch (error: any) {
-      throw new Error(error.response?.data?.detail || 'Registration failed');
+      throw error;
     }
   }
 
@@ -124,7 +124,7 @@ class ApiClient {
 
   async createProduct(productData: any) {
     try {
-      const response = await this.client.post('/products/', productData);
+      const response = await this.client.post('/admin/products/', productData);
       return response.data;
     } catch (error: any) {
       throw new Error(error.response?.data?.detail || 'Failed to create product');

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -20,6 +20,24 @@ export default function CreateProductPage() {
   const [photos, setPhotos] = useState<any[]>([])
   const [createdProductId, setCreatedProductId] = useState<number | null>(null)
 
+  const [categories, setCategories] = useState<any[]>([])
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const fetchedCategories = await api.getCategories();
+        setCategories(fetchedCategories);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to fetch categories",
+          variant: "destructive",
+        });
+      }
+    };
+    fetchCategories();
+  }, [toast]);
+
   const handleSingleProductSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setLoading(true)
@@ -32,7 +50,7 @@ export default function CreateProductPage() {
         price: parseFloat(formData.get('price') as string),
         sku: formData.get('sku') as string,
         stock_quantity: parseInt(formData.get('stock') as string),
-        category_id: 1, // Default category
+        category_id: parseInt(formData.get('category_id') as string),
         manufacturer: formData.get('manufacturer') as string,
         dosage: formData.get('dosage') as string,
         is_prescription_required: formData.get('prescription') === 'on'
@@ -173,7 +191,13 @@ Lisinopril 10mg,ACE inhibitor for blood pressure,12.50,LIS-10MG-NEW,50,Heart Hea
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="category">Category</Label>
-                  <Input id="category" name="category" placeholder="e.g., Pain Management" />
+                  <select id="category" name="category_id" className="w-full p-2 border rounded">
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
               

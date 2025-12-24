@@ -105,7 +105,7 @@ export default function RegisterPage() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.response?.data?.detail || "Registration failed",
+        description: error.response?.data?.detail || error.message || "Registration failed",
         variant: "destructive",
       })
     } finally {

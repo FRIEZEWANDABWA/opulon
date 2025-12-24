@@ -48,7 +48,7 @@ export default function LoginPage() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.response?.data?.detail || "Login failed",
+        description: error.response?.data?.detail || error.message || "Login failed",
         variant: "destructive",
       })
     } finally {
