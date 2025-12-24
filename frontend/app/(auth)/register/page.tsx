@@ -10,6 +10,7 @@ import { SectionBackground } from '@/components/section-background'
 import { useAuthStore } from '@/store/authStore'
 import { api } from '@/lib/api'
 import { useToast } from '@/lib/use-toast'
+import { Check, X } from 'lucide-react'
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -22,15 +23,37 @@ export default function RegisterPage() {
     address: ''
   })
   const [isLoading, setIsLoading] = useState(false)
+  const [passwordValidation, setPasswordValidation] = useState({
+    length: false,
+    uppercase: false,
+    lowercase: false,
+    number: false,
+    special: false,
+  })
   const { login } = useAuthStore()
   const router = useRouter()
   const { toast } = useToast()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: value
     }))
+
+    if (name === 'password') {
+      validatePassword(value)
+    }
+  }
+
+  const validatePassword = (password: string) => {
+    setPasswordValidation({
+      length: password.length >= 8,
+      uppercase: /[A-Z]/.test(password),
+      lowercase: /[a-z]/.test(password),
+      number: /\d/.test(password),
+      special: /[!@#$%^&*(),.?\":{}|<>]/.test(password),
+    })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,14 +77,15 @@ export default function RegisterPage() {
       return
     }
 
-    if (formData.password.length < 6) {
+    if (Object.values(passwordValidation).some(v => !v)) {
       toast({
         title: "Error",
-        description: "Password must be at least 6 characters",
+        description: "Please ensure your password meets all requirements.",
         variant: "destructive",
       })
       return
     }
+
 
     setIsLoading(true)
 
@@ -194,6 +218,26 @@ export default function RegisterPage() {
                       disabled={isLoading}
                       required
                     />
+                    <div className="text-xs text-muted-foreground mt-2">
+                      Password must contain:
+                      <ul>
+                        <li className={`flex items-center ${passwordValidation.length ? 'text-green-500' : ''}`}>
+                          {passwordValidation.length ? <Check className="h-4 w-4 mr-2" /> : <X className="h-4 w-4 mr-2" />} At least 8 characters
+                        </li>
+                        <li className={`flex items-center ${passwordValidation.uppercase ? 'text-green-500' : ''}`}>
+                          {passwordValidation.uppercase ? <Check className="h-4 w-4 mr-2" /> : <X className="h-4 w-4 mr-2" />} At least one uppercase letter
+                        </li>
+                        <li className={`flex items-center ${passwordValidation.lowercase ? 'text-green-500' : ''}`}>
+                          {passwordValidation.lowercase ? <Check className="h-4 w-4 mr-2" /> : <X className="h-4 w-4 mr-2" />} At least one lowercase letter
+                        </li>
+                        <li className={`flex items-center ${passwordValidation.number ? 'text-green-500' : ''}`}>
+                          {passwordValidation.number ? <Check className="h-4 w-4 mr-2" /> : <X className="h-4 w-4 mr-2" />} At least one number
+                        </li>
+                        <li className={`flex items-center ${passwordValidation.special ? 'text-green-500' : ''}`}>
+                          {passwordValidation.special ? <Check className="h-4 w-4 mr-2" /> : <X className="h-4 w-4 mr-2" />} At least one special character
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                   <div className="space-y-2">
                     <label htmlFor="confirmPassword" className="text-sm font-medium">
