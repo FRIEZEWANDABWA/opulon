@@ -25,7 +25,6 @@
     "axios": "^1.6.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "critters": "^0.0.25",
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.292.0",
     "next": "15.0.0",
@@ -40,6 +39,7 @@
     "zustand": "^4.4.6"
   },
   "devDependencies": {
+    "critters": "^0.0.25",
     "eslint": "^8.52.0",
     "eslint-config-next": "15.0.0"
   },

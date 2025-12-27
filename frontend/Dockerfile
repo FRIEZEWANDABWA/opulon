@@ -1,29 +1,26 @@
-FROM node:18-alpine
-
-ARG ENV=development
+# ---------- Builder ----------
+FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
 COPY package*.json ./
+RUN npm install
 
-# Install dependencies
-RUN npm ci
-
-# Copy application code
 COPY . .
+RUN npm run build
 
-# Build the application for production
-RUN if [ "$ENV" = "production" ]; then \
-    npm run build; \
-    fi
+# ---------- Runner ----------
+FROM node:18-alpine AS runner
 
-# Expose port
+WORKDIR /app
+ENV NODE_ENV=production
+
+# Copy standalone output
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+
 EXPOSE 3000
 
-# Command varies by environment
-CMD if [ "$ENV" = "production" ]; then \
-    npm start; \
-    else \
-    npm run dev; \
-    fi
+CMD ["node", "server.js"]
+

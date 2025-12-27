@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   nginx:
     image: nginx:alpine
@@ -8,7 +6,7 @@ services:
       - "443:443"
     volumes:
       - ./infra/nginx/nginx.prod.conf:/etc/nginx/nginx.conf
-      - ./ssl:/etc/nginx/ssl
+      - /etc/letsencrypt:/etc/letsencrypt
     depends_on:
       - frontend
       - backend
@@ -18,7 +16,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      target: production
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=https://opulonhq.com
@@ -31,7 +28,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     environment:
-      - DATABASE_URL=postgresql://opulon:devpassword123@db:5432/opulon_db_dev
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - CSRF_SECRET_KEY=${CSRF_SECRET_KEY}
       - ALLOWED_HOSTS=["https://opulonhq.com", "opulonhq.com"]
@@ -44,9 +41,9 @@ services:
   db:
     image: postgres:15
     environment:
-      - POSTGRES_DB=opulon_db_dev
-      - POSTGRES_USER=opulon
-      - POSTGRES_PASSWORD=devpassword123
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
