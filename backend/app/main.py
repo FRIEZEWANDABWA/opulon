@@ -7,6 +7,10 @@ from .core.config import settings
 from .core.database import engine, Base
 from .api.v1 import auth, products, cart, orders, admin, upload
 from .api.v1 import products_admin
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+logging.getLogger('fastapi_mail').setLevel(logging.DEBUG)
 
 # Security Headers Middleware
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):

@@ -13,7 +13,7 @@ class ApiClient {
         'Content-Type': 'application/json',
       },
       timeout: 5000, // 5 second timeout for faster responses
-      withCredentials: false
+      withCredentials: true
     });
 
     // Request interceptor to add auth token
@@ -82,6 +82,42 @@ class ApiClient {
           localStorage.setItem('user', JSON.stringify(response.data.user));
         }
       }
+      return response.data;
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
+  async resendVerificationEmail(email: string) {
+    try {
+      const response = await this.client.post('/auth/resend-verification', { email });
+      return response.data;
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
+  async verifyEmail(token: string) {
+    try {
+      const response = await this.client.get(`/auth/verify-email?token=${token}`);
+      return response.data;
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
+  async forgotPassword(email: string) {
+    try {
+      const response = await this.client.post('/auth/forgot-password', { email });
+      return response.data;
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
+  async resetPassword(token: string, password: string) {
+    try {
+      const response = await this.client.post('/auth/reset-password', { token, password });
       return response.data;
     } catch (error: any) {
       throw error;

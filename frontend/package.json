@@ -28,7 +28,7 @@
     "critters": "^0.0.25",
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.292.0",
-    "next": "15.0.0",
+    "next": "^14.2.33",
     "next-themes": "^0.2.1",
     "postcss": "^8.4.31",
     "react": "^18.2.0",
@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "eslint": "^8.52.0",
-    "eslint-config-next": "15.0.0"
+    "eslint-config-next": "^14.2.33"
   },
   "engines": {
     "node": ">=18.0.0",
