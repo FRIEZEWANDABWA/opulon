@@ -3,15 +3,20 @@ import os
 import logging
 from typing import List
 from pydantic import EmailStr
+import httpx
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 
 logger = logging.getLogger(__name__)
+
+EMAIL_PROVIDER = os.getenv("EMAIL_PROVIDER", "smtp").lower()
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+RESEND_API_URL = "https://api.resend.com/emails"
 
 
 conf = ConnectionConfig(
     MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
     MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
-    MAIL_FROM=os.getenv("MAIL_FROM", "noreply@yourdomain.com"),
+    MAIL_FROM=os.getenv("MAIL_FROM", "rahisishatech@gmail.com"),
     MAIL_PORT=int(os.getenv("MAIL_PORT", 465)),
     MAIL_SERVER=os.getenv("MAIL_SERVER", "smtp.gmail.com"),
     MAIL_STARTTLS=False,
@@ -21,23 +26,59 @@ conf = ConnectionConfig(
 )
 
 
-async def send_email(subject: str, recipients: List[EmailStr], body: str):
+async def _send_email_smtp(subject: str, recipients: List[EmailStr], body: str):
+    """Sends an email using the configured SMTP server."""
     message = MessageSchema(
         subject=subject,
         recipients=recipients,
         body=body,
         subtype="html",
     )
-
     fm = FastMail(conf)
-
     try:
-        logger.info(f"Sending email with subject '{subject}' to {recipients}")
-        logger.debug(f"Email body: {body}")
+        logger.info(f"Sending email via SMTP with subject '{subject}' to {recipients}")
         await fm.send_message(message)
-        logger.info(f"Email to {recipients} sent successfully.")
+        logger.info(f"Email to {recipients} sent successfully via SMTP.")
     except Exception as e:
-        logger.error(f"Email send failed: {e}", exc_info=True)
+        logger.error(f"SMTP email send failed: {e}", exc_info=True)
+
+async def _send_email_resend(subject: str, recipients: List[EmailStr], body: str):
+    """Sends an email using the Resend API."""
+    if not RESEND_API_KEY:
+        logger.error("RESEND_API_KEY is not set. Cannot send email via Resend.")
+        return
+
+    headers = {
+        "Authorization": f"Bearer {RESEND_API_KEY}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "from": os.getenv("MAIL_FROM", "noreply@yourdomain.com"),
+        "to": recipients,
+        "subject": subject,
+        "html": body,
+    }
+
+    async with httpx.AsyncClient() as client:
+        try:
+            logger.info(f"Sending email via Resend with subject '{subject}' to {recipients}")
+            response = await client.post(RESEND_API_URL, json=payload, headers=headers)
+            response.raise_for_status()
+            logger.info(f"Email to {recipients} sent successfully via Resend.")
+        except httpx.HTTPStatusError as e:
+            logger.error(
+                f"Resend API request failed with status {e.response.status_code}: {e.response.text}",
+                exc_info=True
+            )
+        except Exception as e:
+            logger.error(f"An unexpected error occurred when sending email via Resend: {e}", exc_info=True)
+
+async def send_email(subject: str, recipients: List[EmailStr], body: str):
+    if EMAIL_PROVIDER == 'resend':
+        await _send_email_resend(subject, recipients, body)
+    else:
+        await _send_email_smtp(subject, recipients, body)
+
 
 
 async def send_password_reset_email(email: str, token: str):

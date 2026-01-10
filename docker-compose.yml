@@ -18,6 +18,8 @@ services:
       - MAIL_FROM=${MAIL_FROM}
       - MAIL_PORT=${MAIL_PORT:-465}
       - MAIL_SERVER=${MAIL_SERVER:-smtp.gmail.com}
+      - EMAIL_PROVIDER=${EMAIL_PROVIDER:-smtp}
+      - RESEND_API_KEY=${RESEND_API_KEY}
       - FRONTEND_URL=${FRONTEND_URL:-http://localhost:8080}
     volumes:
       - ./backend:/app:${VOLUME_MODE:-rw}
