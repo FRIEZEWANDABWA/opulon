@@ -88,6 +88,42 @@ class ApiClient {
     }
   }
 
+  async resendVerificationEmail(email: string) {
+    try {
+      const response = await this.client.post('/auth/resend-verification', { email });
+      return response.data;
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
+  async verifyEmail(token: string) {
+    try {
+      const response = await this.client.get(`/auth/verify-email?token=${token}`);
+      return response.data;
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
+  async forgotPassword(email: string) {
+    try {
+      const response = await this.client.post('/auth/forgot-password', { email });
+      return response.data;
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
+  async resetPassword(token: string, password: string) {
+    try {
+      const response = await this.client.post('/auth/reset-password', { token, password });
+      return response.data;
+    } catch (error: any) {
+      throw error;
+    }
+  }
+
   async logout() {
     try {
       await this.client.post('/auth/logout');

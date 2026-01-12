@@ -1,29 +1,73 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { SectionBackground } from '@/components/section-background'
 import { useAuthStore } from '@/store/authStore'
 import { api } from '@/lib/api'
 import { useToast } from '@/lib/use-toast'
-import { Eye, EyeOff } from 'lucide-react'
+import { Eye, EyeOff, XCircle } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [isResending, setIsResending] = useState(false);
+  const [loginError, setLoginError] = useState('');
+  const [loginAttempted, setLoginAttempted] = useState(false);
   const { login } = useAuthStore()
   const router = useRouter()
   const { toast } = useToast()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (resendCooldown > 0) {
+      timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
+
+
+  const handleResendVerification = async () => {
+    if (!email) {
+      toast({
+        title: "Error",
+        description: "Please enter your email address to resend the verification link.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setIsResending(true);
+    try {
+      await api.resendVerificationEmail(email);
+      toast({
+        title: "Success",
+        description: "A new verification email has been sent. Please check your inbox.",
+      });
+      setResendCooldown(60);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.response?.data?.detail || "Failed to resend verification email.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsResending(false);
+    }
+  };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginAttempted(true);
+    setLoginError('');
+
     if (!email || !password) {
       toast({
         title: "Error",
@@ -46,11 +90,16 @@ export default function LoginPage() {
       
       router.push('/')
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.response?.data?.detail || error.message || "Login failed",
-        variant: "destructive",
-      })
+      const errorMessage = error.response?.data?.detail || error.message || "Login failed";
+      if (errorMessage === "Email not verified. Please check your email.") {
+        setLoginError(errorMessage);
+      } else {
+        toast({
+          title: "Error",
+          description: errorMessage,
+          variant: "destructive",
+        })
+      }
     } finally {
       setIsLoading(false)
     }
@@ -81,6 +130,35 @@ export default function LoginPage() {
           </div>
 
           {/* Login Form */}
+          {loginAttempted && loginError && (
+            <Alert variant="destructive" className="relative mb-4">
+              <XCircle className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>
+                {loginError} Please check your inbox or resend the verification email.
+                <div className="mt-2">
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto text-sm text-destructive hover:text-destructive/80"
+                    onClick={handleResendVerification}
+                    disabled={isResending || resendCooldown > 0}
+                  >
+                    {isResending
+                      ? "Sending..."
+                      : resendCooldown > 0
+                      ? `Resend in ${resendCooldown}s`
+                      : "Resend verification email"}
+                  </Button>
+                </div>
+              </AlertDescription>
+              <button 
+                onClick={() => setLoginError('')} 
+                className="absolute top-2 right-2 p-1 rounded-full hover:bg-destructive/10"
+              >
+                <XCircle className="h-5 w-5" />
+              </button>
+            </Alert>
+          )}
           <Card className="shadow-lg bg-white/90 dark:bg-gray-900/90 backdrop-blur">
             <CardHeader className="space-y-1 pb-4">
               <CardTitle className="text-xl">Sign In to Your Account</CardTitle>
@@ -99,7 +177,10 @@ export default function LoginPage() {
                     type="email"
                     placeholder="your.email@company.com"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setLoginAttempted(false);
+                    }}
                     disabled={isLoading}
                     required
                     className="h-11"
@@ -123,7 +204,10 @@ export default function LoginPage() {
                       type={showPassword ? 'text' : 'password'}
                       placeholder="Enter your password"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setLoginAttempted(false);
+                      }}
                       disabled={isLoading}
                       required
                       className="h-11"
@@ -145,7 +229,7 @@ export default function LoginPage() {
                   {isLoading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
-              
+                            
               {/* Demo Information */}
               <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                 <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">

@@ -13,12 +13,22 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL:-redis://redis:6379}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_FROM=${MAIL_FROM}
+      - MAIL_PORT=${MAIL_PORT:-465}
+      - MAIL_SERVER=${MAIL_SERVER:-smtp.gmail.com}
+      - EMAIL_PROVIDER=${EMAIL_PROVIDER:-smtp}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:8080}
     volumes:
       - ./backend:/app:${VOLUME_MODE:-rw}
       - backend_uploads:/app/uploads
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
     networks:
       - opilon-network
 
@@ -53,6 +63,11 @@ services:
       - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d opilon"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - opilon-network
 

@@ -1,13 +1,12 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { SectionBackground } from '@/components/section-background'
-import { useAuthStore } from '@/store/authStore'
 import { api } from '@/lib/api'
 import { useToast } from '@/lib/use-toast'
 import { Check, X, Eye, EyeOff } from 'lucide-react'
@@ -23,6 +22,7 @@ export default function RegisterPage() {
     address: ''
   })
   const [isLoading, setIsLoading] = useState(false)
+  const [registrationSuccess, setRegistrationSuccess] = useState(false)
   const [passwordValidation, setPasswordValidation] = useState({
     length: false,
     uppercase: false,
@@ -32,9 +32,10 @@ export default function RegisterPage() {
   })
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const { login } = useAuthStore()
   const router = useRouter()
-  const { toast } = useToast()
+    const { toast } = useToast()
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [isResending, setIsResending] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -57,6 +58,34 @@ export default function RegisterPage() {
       special: /[!@#$%^&*(),.?\":{}|<>]/.test(password),
     })
   }
+
+    useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (resendCooldown > 0) {
+      timer = setTimeout(() => setResendCooldown(resendCooldown - 1), 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
+
+  const handleResendVerification = async () => {
+    setIsResending(true);
+    try {
+      await api.resendVerificationEmail(formData.email);
+      toast({
+        title: "Success",
+        description: "A new verification email has been sent. Please check your inbox.",
+      });
+      setResendCooldown(60);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.response?.data?.detail || "Failed to resend verification email.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -93,19 +122,23 @@ export default function RegisterPage() {
 
     try {
       const { confirmPassword, ...userData } = formData
-      const response = await api.register(userData)
-      login(response.user, response.access_token)
-      
-      toast({
-        title: "Success",
-        description: "Account created successfully!",
-      })
-      
-      router.push('/')
+      await api.register(userData)
+      setRegistrationSuccess(true);
     } catch (error: any) {
+      const errorDetail = error.response?.data?.detail;
+      let errorMessage = "Registration failed";
+
+      if (Array.isArray(errorDetail)) {
+        errorMessage = errorDetail.map((err: any) => err.msg).join(', ');
+      } else if (typeof errorDetail === 'string') {
+        errorMessage = errorDetail;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
       toast({
         title: "Error",
-        description: error.response?.data?.detail || error.message || "Registration failed",
+        description: errorMessage,
         variant: "destructive",
       })
     } finally {
@@ -117,15 +150,47 @@ export default function RegisterPage() {
     <SectionBackground image="Healthcare Technology3.png" overlay="green" className="min-h-screen">
       <div className="container flex min-h-screen flex-col items-center justify-center py-6 px-4 sm:py-12">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[500px]">
-          <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              Create an account
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Enter your details to create your account
-            </p>
-          </div>
-          <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur">
+          {registrationSuccess ? (
+            <Card className="shadow-lg bg-white/90 dark:bg-gray-900/90 backdrop-blur">
+              <CardHeader>
+                <CardTitle className="text-xl">Registration Successful</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-center text-muted-foreground">
+                  Thank you for registering. A verification link has been sent to your email address. Please check your inbox to complete the process.
+                </p>
+                                <div className="mt-6 text-center space-y-4">
+                  <div>
+                    <Button
+                      variant="link"
+                      className="p-0 h-auto text-sm text-blue-600 hover:text-blue-700"
+                      onClick={handleResendVerification}
+                      disabled={isResending || resendCooldown > 0}
+                    >
+                      {isResending
+                        ? "Sending..."
+                        : resendCooldown > 0
+                        ? `Resend in ${resendCooldown}s`
+                        : "Resend verification email"}
+                    </Button>
+                  </div>
+                  <Link href="/login" className="font-medium text-blue-600 hover:text-blue-700 hover:underline">
+                    Back to Login
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              <div className="flex flex-col space-y-2 text-center">
+                <h1 className="text-2xl font-semibold tracking-tight">
+                  Create an account
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  Enter your details to create your account
+                </p>
+              </div>
+              <Card className="bg-white/90 dark:bg-gray-900/90 backdrop-blur">
             <CardHeader>
               <CardTitle>Sign Up</CardTitle>
               <CardDescription>
@@ -133,7 +198,7 @@ export default function RegisterPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} method="POST" className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label htmlFor="full_name" className="text-sm font-medium">
@@ -281,6 +346,8 @@ export default function RegisterPage() {
               </form>
             </CardContent>
           </Card>
+          </>
+          )}
           <p className="px-8 text-center text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link
