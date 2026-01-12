@@ -38,7 +38,7 @@ services:
       - MAIL_SERVER=${MAIL_SERVER:-smtp.gmail.com}
       - EMAIL_PROVIDER=${EMAIL_PROVIDER:-smtp}
       - RESEND_API_KEY=${RESEND_API_KEY}
-      - FRONTEND_URL=${FRONTEND_URL:-http://opulonhq.com}
+      - FRONTEND_URL=${FRONTEND_URL:-https://opulonhq.com}
       - ALLOWED_HOSTS=["https://opulonhq.com", "opulonhq.com"]
     volumes:
       - ./backend/uploads:/app/uploads
