@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { SectionBackground } from "@/components/section-background"
-import { 
+import {
   Building2, Pill, Users, Shield, TrendingUp, Clock,
   ArrowRight, CheckCircle, Heart, Award, Zap, Globe
 } from "lucide-react"
@@ -11,7 +11,7 @@ export default function PharmacyServicesPage() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <SectionBackground image="cta.png" overlay="dark" className="min-h-[70vh] flex items-center">
+      <SectionBackground image="cta.webp" overlay="dark" className="min-h-[70vh] flex items-center">
         <div className="container space-y-8 pb-16 pt-16 md:pb-24 md:pt-20">
           <div className="mx-auto max-w-4xl text-center">
             <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl text-white drop-shadow-lg">
@@ -22,7 +22,7 @@ export default function PharmacyServicesPage() {
               </span>
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-gray-100 sm:text-xl drop-shadow-md">
-              Empowering pharmacies with innovative solutions, technology platforms, 
+              Empowering pharmacies with innovative solutions, technology platforms,
               and support services that enhance patient care and operational efficiency.
             </p>
           </div>
@@ -30,14 +30,14 @@ export default function PharmacyServicesPage() {
       </SectionBackground>
 
       {/* Service Categories */}
-      <SectionBackground image="Healthcare Technology3.png" overlay="light">
+      <SectionBackground image="Healthcare Technology3.webp" overlay="light">
         <div className="container py-16 md:py-24">
           <div className="mx-auto max-w-3xl text-center mb-12">
             <h2 className="text-3xl font-bold sm:text-4xl drop-shadow-sm">
               Complete Pharmacy Solutions Portfolio
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              From retail to specialty pharmacy, we provide comprehensive solutions 
+              From retail to specialty pharmacy, we provide comprehensive solutions
               that help pharmacies thrive in today's healthcare landscape
             </p>
           </div>
@@ -59,7 +59,7 @@ export default function PharmacyServicesPage() {
               <CardContent className="p-8">
                 <div className="space-y-4">
                   <p className="text-muted-foreground">
-                    Comprehensive support for independent and chain pharmacies including 
+                    Comprehensive support for independent and chain pharmacies including
                     inventory management, prescription processing, and patient care programs.
                   </p>
                   <ul className="space-y-2">
@@ -100,7 +100,7 @@ export default function PharmacyServicesPage() {
               <CardContent className="p-8">
                 <div className="space-y-4">
                   <p className="text-muted-foreground">
-                    Specialized services for complex medications including biologics, 
+                    Specialized services for complex medications including biologics,
                     oncology drugs, and rare disease treatments with comprehensive patient support.
                   </p>
                   <ul className="space-y-2">
@@ -141,7 +141,7 @@ export default function PharmacyServicesPage() {
               <CardContent className="p-8">
                 <div className="space-y-4">
                   <p className="text-muted-foreground">
-                    Complete pharmacy solutions for hospitals and health systems including 
+                    Complete pharmacy solutions for hospitals and health systems including
                     sterile compounding, medication management, and clinical services.
                   </p>
                   <ul className="space-y-2">
@@ -182,7 +182,7 @@ export default function PharmacyServicesPage() {
               <CardContent className="p-8">
                 <div className="space-y-4">
                   <p className="text-muted-foreground">
-                    Advanced technology platforms including pharmacy management systems, 
+                    Advanced technology platforms including pharmacy management systems,
                     automation solutions, and data analytics for operational excellence.
                   </p>
                   <ul className="space-y-2">
@@ -229,7 +229,7 @@ export default function PharmacyServicesPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  Streamlined workflows and automation reduce operational 
+                  Streamlined workflows and automation reduce operational
                   costs while improving prescription processing speed.
                 </CardDescription>
               </CardContent>
@@ -242,7 +242,7 @@ export default function PharmacyServicesPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  Clinical support services and patient programs improve 
+                  Clinical support services and patient programs improve
                   medication adherence and health outcomes.
                 </CardDescription>
               </CardContent>
@@ -255,7 +255,7 @@ export default function PharmacyServicesPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  Comprehensive compliance support ensures adherence 
+                  Comprehensive compliance support ensures adherence
                   to all regulatory requirements and industry standards.
                 </CardDescription>
               </CardContent>
@@ -268,7 +268,7 @@ export default function PharmacyServicesPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  Round-the-clock technical support and customer service 
+                  Round-the-clock technical support and customer service
                   ensure uninterrupted pharmacy operations.
                 </CardDescription>
               </CardContent>
@@ -278,7 +278,7 @@ export default function PharmacyServicesPage() {
       </SectionBackground>
 
       {/* Success Metrics */}
-      <SectionBackground image="cta page.jpg" overlay="green">
+      <SectionBackground image="cta page.webp" overlay="green">
         <div className="container py-16 md:py-24">
           <div className="mx-auto max-w-4xl text-center mb-12">
             <h2 className="text-3xl font-bold sm:text-4xl text-white drop-shadow-lg">
@@ -288,7 +288,7 @@ export default function PharmacyServicesPage() {
               Our pharmacy solutions deliver measurable improvements in efficiency and patient outcomes
             </p>
           </div>
-          
+
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             <div className="text-center backdrop-blur-md bg-white/20 dark:bg-gray-900/20 rounded-lg p-6 border border-white/20">
               <div className="text-4xl font-bold text-white mb-2 drop-shadow-lg">25,000+</div>
@@ -311,14 +311,14 @@ export default function PharmacyServicesPage() {
       </SectionBackground>
 
       {/* CTA Section */}
-      <SectionBackground image="18.jpg" overlay="dark">
+      <SectionBackground image="18.webp" overlay="dark">
         <div className="container py-16 md:py-24">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-3xl font-bold sm:text-4xl mb-6 text-white drop-shadow-lg">
               Transform Your Pharmacy Operations
             </h2>
             <p className="text-xl mb-8 text-gray-100 drop-shadow-md">
-              Partner with Opulon to enhance patient care, improve efficiency, 
+              Partner with Opulon to enhance patient care, improve efficiency,
               and grow your pharmacy business with our comprehensive solutions.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center sm:gap-6">

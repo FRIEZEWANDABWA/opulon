@@ -4,14 +4,14 @@ import Image from "next/image"
 import { useState } from "react"
 
 const healthcareImages = [
-  "/images/5.png",
-  "/images/6.png", 
-  "/images/7.png",
-  "/images/8.png",
-  "/images/9.png",
-  "/images/13.png",
-  "/images/14.png",
-  "/images/15.png"
+  "/images/5.webp",
+  "/images/6.webp",
+  "/images/7.webp",
+  "/images/8.webp",
+  "/images/9.webp",
+  "/images/13.webp",
+  "/images/14.webp",
+  "/images/15.webp"
 ]
 
 export function ImageGallery() {
@@ -36,9 +36,8 @@ export function ImageGallery() {
         {healthcareImages.map((_, index) => (
           <button
             key={index}
-            className={`w-2 h-2 rounded-full transition-all ${
-              index === currentIndex ? 'bg-white' : 'bg-white/50'
-            }`}
+            className={`w-2 h-2 rounded-full transition-all ${index === currentIndex ? 'bg-white' : 'bg-white/50'
+              }`}
             onClick={() => setCurrentIndex(index)}
           />
         ))}

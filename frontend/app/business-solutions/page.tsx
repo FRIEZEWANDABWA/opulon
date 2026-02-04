@@ -2,7 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { SectionBackground } from "@/components/section-background"
-import { 
+import {
   Building2, Pill, Stethoscope, Users, Shield, TrendingUp,
   ArrowRight, CheckCircle, Globe, Heart, Award, Zap
 } from "lucide-react"
@@ -11,7 +11,7 @@ export default function BusinessSolutionsPage() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <SectionBackground image="20.jpeg" overlay="dark" className="min-h-[70vh] flex items-center">
+      <SectionBackground image="20.webp" overlay="dark" className="min-h-[70vh] flex items-center">
         <div className="container space-y-8 pb-16 pt-16 md:pb-24 md:pt-20">
           <div className="mx-auto max-w-4xl text-center">
             <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl text-white drop-shadow-lg">
@@ -22,7 +22,7 @@ export default function BusinessSolutionsPage() {
               </span>
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-gray-100 sm:text-xl drop-shadow-md">
-              Empowering healthcare organizations with innovative distribution, technology, 
+              Empowering healthcare organizations with innovative distribution, technology,
               and support solutions that improve patient outcomes and operational efficiency.
             </p>
           </div>
@@ -30,7 +30,7 @@ export default function BusinessSolutionsPage() {
       </SectionBackground>
 
       {/* Main Solutions Grid */}
-      <SectionBackground image="17.jpeg" overlay="light">
+      <SectionBackground image="17.webp" overlay="light">
         <div className="container py-16 md:py-24">
           <div className="grid gap-8 lg:grid-cols-2">
             {/* Pharmaceutical Distribution */}
@@ -49,7 +49,7 @@ export default function BusinessSolutionsPage() {
               <CardContent className="p-8">
                 <div className="space-y-4">
                   <p className="text-muted-foreground">
-                    Comprehensive pharmaceutical distribution services including specialty medications, 
+                    Comprehensive pharmaceutical distribution services including specialty medications,
                     generics, biosimilars, and controlled substances with advanced cold chain management.
                   </p>
                   <ul className="space-y-2">
@@ -91,7 +91,7 @@ export default function BusinessSolutionsPage() {
               <CardContent className="p-8">
                 <div className="space-y-4">
                   <p className="text-muted-foreground">
-                    Complete medical-surgical distribution including surgical instruments, 
+                    Complete medical-surgical distribution including surgical instruments,
                     diagnostic equipment, consumables, and innovative healthcare technologies.
                   </p>
                   <ul className="space-y-2">
@@ -133,7 +133,7 @@ export default function BusinessSolutionsPage() {
               <CardContent className="p-8">
                 <div className="space-y-4">
                   <p className="text-muted-foreground">
-                    End-to-end pharmacy solutions including retail, institutional, and specialty 
+                    End-to-end pharmacy solutions including retail, institutional, and specialty
                     pharmacy services with advanced technology platforms.
                   </p>
                   <ul className="space-y-2">
@@ -175,7 +175,7 @@ export default function BusinessSolutionsPage() {
               <CardContent className="p-8">
                 <div className="space-y-4">
                   <p className="text-muted-foreground">
-                    Innovative healthcare technology solutions including AI-powered analytics, 
+                    Innovative healthcare technology solutions including AI-powered analytics,
                     automation platforms, and digital health tools.
                   </p>
                   <ul className="space-y-2">
@@ -205,7 +205,7 @@ export default function BusinessSolutionsPage() {
       </SectionBackground>
 
       {/* Value Propositions */}
-      <SectionBackground image="Healthcare Technology3.png" overlay="blue">
+      <SectionBackground image="Healthcare Technology3.webp" overlay="blue">
         <div className="container py-16 md:py-24">
           <div className="mx-auto max-w-3xl text-center mb-12">
             <h2 className="text-3xl font-bold sm:text-4xl text-white drop-shadow-lg">
@@ -223,7 +223,7 @@ export default function BusinessSolutionsPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  99.9% order accuracy with comprehensive quality assurance 
+                  99.9% order accuracy with comprehensive quality assurance
                   and regulatory compliance across all operations.
                 </CardDescription>
               </CardContent>
@@ -236,7 +236,7 @@ export default function BusinessSolutionsPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  Advanced analytics and automation to optimize inventory, 
+                  Advanced analytics and automation to optimize inventory,
                   reduce costs, and improve operational efficiency.
                 </CardDescription>
               </CardContent>
@@ -249,7 +249,7 @@ export default function BusinessSolutionsPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base">
-                  Solutions designed to improve patient access, adherence, 
+                  Solutions designed to improve patient access, adherence,
                   and outcomes across the entire care continuum.
                 </CardDescription>
               </CardContent>
@@ -259,14 +259,14 @@ export default function BusinessSolutionsPage() {
       </SectionBackground>
 
       {/* CTA Section */}
-      <SectionBackground image="19.jpeg" overlay="dark">
+      <SectionBackground image="19.webp" overlay="dark">
         <div className="container py-16 md:py-24">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-3xl font-bold sm:text-4xl mb-6 text-white drop-shadow-lg">
               Ready to Optimize Your Healthcare Operations?
             </h2>
             <p className="text-lg text-gray-100 mb-8 drop-shadow-md">
-              Connect with our healthcare experts to discover how Opulon can transform 
+              Connect with our healthcare experts to discover how Opulon can transform
               your business with tailored solutions and proven results.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center sm:gap-6">

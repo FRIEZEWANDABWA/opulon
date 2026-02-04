@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ImageGallery } from "@/components/image-gallery"
 import { SectionBackground } from "@/components/section-background"
-import { 
-  ShoppingBag, Shield, Truck, Clock, Building2, Users, 
+import {
+  ShoppingBag, Shield, Truck, Clock, Building2, Users,
   Stethoscope, Pill, Heart, Activity, Award, Globe,
   ArrowRight, CheckCircle, Star, TrendingUp
 } from "lucide-react"
@@ -13,7 +13,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <SectionBackground image="Healthcare Technology4.jpg" overlay="blue" className="min-h-screen">
+      <SectionBackground image="Healthcare Technology4.webp" overlay="blue" className="min-h-screen">
         <div className="container space-y-8 pb-16 pt-16 md:pb-24 md:pt-20 lg:pb-32 lg:pt-24">
           <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 text-center">
             <div className="flex items-center gap-2 rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300">
@@ -28,7 +28,7 @@ export default function HomePage() {
               </span>
             </h1>
             <p className="max-w-3xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
-              Opulon delivers comprehensive pharmaceutical distribution, medical-surgical supplies, 
+              Opulon delivers comprehensive pharmaceutical distribution, medical-surgical supplies,
               and healthcare technology solutions to improve patient outcomes across the continuum of care.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
@@ -64,7 +64,7 @@ export default function HomePage() {
       </SectionBackground>
 
       {/* Business Solutions Section */}
-      <SectionBackground image="6.png" overlay="light">
+      <SectionBackground image="6.webp" overlay="light">
         <div className="container space-y-12 py-16 md:py-24">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl">
@@ -89,7 +89,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base leading-relaxed">
-                  Comprehensive pharmaceutical supply chain solutions including specialty medications, 
+                  Comprehensive pharmaceutical supply chain solutions including specialty medications,
                   generics, and biosimilars with temperature-controlled logistics.
                 </CardDescription>
                 <Link href="/pharmaceutical-distribution" className="mt-4 inline-flex items-center text-blue-600 hover:text-blue-700">
@@ -109,7 +109,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base leading-relaxed">
-                  Complete medical-surgical distribution including surgical instruments, 
+                  Complete medical-surgical distribution including surgical instruments,
                   diagnostic equipment, and consumable medical supplies.
                 </CardDescription>
                 <Link href="/medical-surgical" className="mt-4 inline-flex items-center text-green-600 hover:text-green-700">
@@ -129,7 +129,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base leading-relaxed">
-                  End-to-end pharmacy solutions including inventory management, 
+                  End-to-end pharmacy solutions including inventory management,
                   prescription processing, and patient care programs.
                 </CardDescription>
                 <Link href="/pharmacy-services" className="mt-4 inline-flex items-center text-purple-600 hover:text-purple-700">
@@ -142,7 +142,7 @@ export default function HomePage() {
       </SectionBackground>
 
       {/* Why Choose Opulon */}
-      <SectionBackground image="global network2.png" overlay="green">
+      <SectionBackground image="global network2.webp" overlay="green">
         <div className="container space-y-12 py-16 md:py-24">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl">
@@ -160,7 +160,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  FDA-compliant facilities with rigorous quality assurance and 
+                  FDA-compliant facilities with rigorous quality assurance and
                   temperature-controlled storage and distribution.
                 </CardDescription>
               </CardContent>
@@ -173,7 +173,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Data-driven insights and predictive analytics to optimize 
+                  Data-driven insights and predictive analytics to optimize
                   inventory, reduce costs, and improve patient outcomes.
                 </CardDescription>
               </CardContent>
@@ -186,7 +186,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Extensive distribution network with strategic partnerships 
+                  Extensive distribution network with strategic partnerships
                   ensuring reliable supply chain management worldwide.
                 </CardDescription>
               </CardContent>
@@ -199,7 +199,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Solutions designed to improve patient access, adherence, 
+                  Solutions designed to improve patient access, adherence,
                   and health outcomes across all care settings.
                 </CardDescription>
               </CardContent>
@@ -209,7 +209,7 @@ export default function HomePage() {
       </SectionBackground>
 
       {/* Statistics Section */}
-      <SectionBackground image="sterile-equipment.jpg" overlay="light">
+      <SectionBackground image="sterile-equipment.webp" overlay="light">
         <div className="container py-16 md:py-24">
           <div className="mx-auto max-w-4xl">
             <div className="text-center mb-12">
@@ -247,7 +247,7 @@ export default function HomePage() {
               Ready to Transform Your Healthcare Operations?
             </h2>
             <p className="text-xl mb-8 opacity-90">
-              Join thousands of healthcare professionals who trust Opulon for their 
+              Join thousands of healthcare professionals who trust Opulon for their
               pharmaceutical and medical supply needs.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center sm:gap-6">

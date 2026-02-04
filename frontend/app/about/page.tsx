@@ -2,8 +2,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { SectionBackground } from "@/components/section-background"
-import { 
-  Users, Award, Globe, Heart, Shield, TrendingUp, 
+import {
+  Users, Award, Globe, Heart, Shield, TrendingUp,
   Building2, Target, Eye, Lightbulb, ArrowRight
 } from "lucide-react"
 
@@ -11,7 +11,7 @@ export default function AboutPage() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <SectionBackground image="20.jpeg" overlay="dark" className="min-h-[70vh] flex items-center">
+      <SectionBackground image="20.webp" overlay="dark" className="min-h-[70vh] flex items-center">
         <div className="container space-y-8 pb-16 pt-16 md:pb-24 md:pt-20">
           <div className="mx-auto max-w-4xl text-center">
             <h1 className="text-4xl font-bold sm:text-5xl md:text-6xl text-white">
@@ -22,8 +22,8 @@ export default function AboutPage() {
               </span>
             </h1>
             <p className="mt-6 text-lg leading-relaxed text-gray-200 sm:text-xl">
-              For over a century, Opulon has been at the forefront of healthcare innovation, 
-              connecting pharmaceutical manufacturers, healthcare providers, and patients 
+              For over a century, Opulon has been at the forefront of healthcare innovation,
+              connecting pharmaceutical manufacturers, healthcare providers, and patients
               through comprehensive distribution and technology solutions.
             </p>
           </div>
@@ -43,7 +43,7 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base leading-relaxed">
-                  To improve lives and advance health outcomes by delivering pharmaceutical 
+                  To improve lives and advance health outcomes by delivering pharmaceutical
                   and healthcare products, services, and solutions to communities across the globe.
                 </CardDescription>
               </CardContent>
@@ -58,7 +58,7 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base leading-relaxed">
-                  To be the most trusted partner in healthcare, enabling better health outcomes 
+                  To be the most trusted partner in healthcare, enabling better health outcomes
                   through innovative distribution, technology, and care solutions.
                 </CardDescription>
               </CardContent>
@@ -73,7 +73,7 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription className="text-base leading-relaxed">
-                  Integrity, innovation, and collaboration guide everything we do as we work 
+                  Integrity, innovation, and collaboration guide everything we do as we work
                   to improve patient outcomes and advance the future of healthcare.
                 </CardDescription>
               </CardContent>
@@ -91,12 +91,12 @@ export default function AboutPage() {
                 Leading Healthcare Distribution & Technology
               </h2>
               <p className="text-lg text-gray-200">
-                Opulon is a Fortune 10 company that partners with pharmaceutical manufacturers, 
-                providers, pharmacies, governments, and other organizations to deliver insights, 
+                Opulon is a Fortune 10 company that partners with pharmaceutical manufacturers,
+                providers, pharmacies, governments, and other organizations to deliver insights,
                 products, and services that make quality care more accessible and affordable.
               </p>
             </div>
-            
+
             <div className="grid gap-8 md:grid-cols-2">
               <div className="space-y-6 backdrop-blur-sm bg-white/20 dark:bg-gray-900/20 rounded-lg p-6">
                 <h3 className="text-2xl font-semibold text-white">What We Do</h3>
@@ -108,7 +108,7 @@ export default function AboutPage() {
                     <div>
                       <h4 className="font-medium text-white">Pharmaceutical Distribution</h4>
                       <p className="text-sm text-gray-200">
-                        Comprehensive supply chain solutions for pharmaceuticals, 
+                        Comprehensive supply chain solutions for pharmaceuticals,
                         specialty medications, and biosimilars.
                       </p>
                     </div>
@@ -120,7 +120,7 @@ export default function AboutPage() {
                     <div>
                       <h4 className="font-medium text-white">Medical-Surgical Solutions</h4>
                       <p className="text-sm text-gray-200">
-                        Medical equipment, surgical supplies, and healthcare 
+                        Medical equipment, surgical supplies, and healthcare
                         technology solutions for providers.
                       </p>
                     </div>
@@ -132,14 +132,14 @@ export default function AboutPage() {
                     <div>
                       <h4 className="font-medium text-white">Healthcare Technology</h4>
                       <p className="text-sm text-gray-200">
-                        Innovative technology platforms and data analytics 
+                        Innovative technology platforms and data analytics
                         to improve healthcare outcomes.
                       </p>
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               <div className="space-y-6 backdrop-blur-sm bg-white/20 dark:bg-gray-900/20 rounded-lg p-6">
                 <h3 className="text-2xl font-semibold text-white">Our Impact</h3>
                 <div className="grid gap-4">
@@ -173,7 +173,7 @@ export default function AboutPage() {
               These principles guide our decisions and actions as we work to advance healthcare
             </p>
           </div>
-          
+
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             <Card className="text-center backdrop-blur-sm bg-white/90 dark:bg-gray-900/90">
               <CardHeader>
@@ -182,7 +182,7 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  We conduct business with the highest ethical standards 
+                  We conduct business with the highest ethical standards
                   and transparency in all our interactions.
                 </CardDescription>
               </CardContent>
@@ -195,7 +195,7 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  We prioritize our customers' needs and work tirelessly 
+                  We prioritize our customers' needs and work tirelessly
                   to exceed their expectations.
                 </CardDescription>
               </CardContent>
@@ -208,7 +208,7 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  We embrace new ideas and technologies to continuously 
+                  We embrace new ideas and technologies to continuously
                   improve healthcare delivery.
                 </CardDescription>
               </CardContent>
@@ -221,7 +221,7 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  We strive for operational excellence in everything 
+                  We strive for operational excellence in everything
                   we do to deliver superior results.
                 </CardDescription>
               </CardContent>
@@ -231,7 +231,7 @@ export default function AboutPage() {
       </SectionBackground>
 
       {/* Corporate Governance */}
-      <SectionBackground image="9.png" overlay="purple">
+      <SectionBackground image="9.webp" overlay="purple">
         <div className="container py-16 md:py-24">
           <div className="mx-auto max-w-4xl">
             <div className="text-center mb-12">
@@ -239,11 +239,11 @@ export default function AboutPage() {
                 Corporate Governance & Responsibility
               </h2>
               <p className="text-lg text-gray-200">
-                We are committed to the highest standards of corporate governance, 
+                We are committed to the highest standards of corporate governance,
                 environmental stewardship, and social responsibility.
               </p>
             </div>
-            
+
             <div className="grid gap-8 md:grid-cols-3">
               <Card className="backdrop-blur-sm bg-white/90 dark:bg-gray-900/90">
                 <CardHeader>
@@ -252,7 +252,7 @@ export default function AboutPage() {
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="mb-4">
-                    Strong board oversight, transparent reporting, and 
+                    Strong board oversight, transparent reporting, and
                     ethical business practices guide our operations.
                   </CardDescription>
                   <Link href="/governance" className="text-blue-600 hover:text-blue-700 text-sm font-medium">
@@ -268,7 +268,7 @@ export default function AboutPage() {
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="mb-4">
-                    Environmental responsibility and sustainable practices 
+                    Environmental responsibility and sustainable practices
                     across our global operations and supply chain.
                   </CardDescription>
                   <Link href="/sustainability" className="text-green-600 hover:text-green-700 text-sm font-medium">
@@ -284,7 +284,7 @@ export default function AboutPage() {
                 </CardHeader>
                 <CardContent>
                   <CardDescription className="mb-4">
-                    Community investment, healthcare access initiatives, 
+                    Community investment, healthcare access initiatives,
                     and programs that improve health equity.
                   </CardDescription>
                   <Link href="/social-impact" className="text-red-600 hover:text-red-700 text-sm font-medium">
@@ -298,14 +298,14 @@ export default function AboutPage() {
       </SectionBackground>
 
       {/* CTA Section */}
-      <SectionBackground image="17.jpeg" overlay="dark">
+      <SectionBackground image="17.webp" overlay="dark">
         <div className="container py-16 md:py-24">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-3xl font-bold sm:text-4xl mb-6 text-white">
               Partner with Opulon
             </h2>
             <p className="text-lg text-gray-200 mb-8">
-              Join us in our mission to advance healthcare and improve patient outcomes 
+              Join us in our mission to advance healthcare and improve patient outcomes
               through innovative solutions and trusted partnerships.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center sm:gap-6">
